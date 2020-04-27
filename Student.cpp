@@ -30,3 +30,8 @@ void Student::printStudent()
        << "\tGPA: " << gpa << '\n'
        << "\tAdvisor ID: " << advisor << '\n';
 }
+
+int Student::getId()
+{
+  return studentId;
+}

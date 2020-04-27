@@ -22,7 +22,8 @@ void printStudentTree(BST<Student *> *tree)
 }
 
 // Helper function for deallocating the students in a BST
-void deallocateStudents(TreeNode<Student *> *node) {
+void deallocateStudents(TreeNode<Student *> *node)
+{
   if (node->left) {
     deallocateStudents(node->left);
   }
@@ -44,15 +45,51 @@ void deallocateStudents(BST<Student *> *tree)
 
 int main(int argc, char **argv)
 {
-  BST<Student *> *tree = new BST<Student *>();
+  BST<Student *> *studentDB = new BST<Student *>();
 
-  Student *stud = new Student();
-  tree->insert(1, stud);
+  Student *stud = new Student(1, "Jim Mij", "Freshman", "Business", 3.2, -1);
+  studentDB->insert(stud->getId(), stud);
 
-  printStudentTree(tree);
+  // Main user input loop
+  while (true) {
+    string input;
 
-  deallocateStudents(tree);
-  delete tree;
+    cout << "---- Choices ----" << endl;
+    cout << "1. Print all students and their information (sorted by ascending id #)" << '\n'
+         << "2. Print all faculty and their information (sorted by ascending id #)" << '\n'
+         << "3. Find and display student information given the students id" << '\n'
+         << "4. Find and display faculty information given the faculty id" << '\n'
+         << "5. Given a student’s id, print the name and info of their faculty advisor" << '\n'
+         << "6. Given a faculty id, print ALL the names and info of his/her advisees." << '\n'
+         << "7. Add a new student" << '\n'
+         << "8. Delete a student given the id" << '\n'
+         << "9. Add a new faculty member" << '\n'
+         << "10. Delete a faculty member given the id." << '\n'
+         << "11. Change a student’s advisor given the student id and the new faculty id." << '\n'
+         << "12. Remove an advisee from a faculty member given the ids" << '\n'
+         << "13. Rollback" << '\n'
+         << "14. Exit" << '\n';
+
+    cout << "> ";
+
+    getline(cin, input);
+
+    if (input == "1") {
+      printStudentTree(studentDB);
+    } else if (input == "14") {
+      break;
+    } else {
+      cout << "Sorry, that input is currently either invalid or not implemented yet." << endl;
+    }
+    
+    cout << "Press enter to continue..." << endl;
+    string unused;
+    getline(cin, unused);
+  }
+
+  // Deallocate students and delete trees
+  deallocateStudents(studentDB);
+  delete studentDB;
 
   return 0;
 }

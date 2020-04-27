@@ -18,6 +18,10 @@ public:
   Student(int studentId, string name, string level, string major, double gpa,
           int advisor);
   
+  // Accessors
+  // Returns the students' student ID
+  int getId();
+  
   // Prints all the information for a student
   void printStudent();
 };
