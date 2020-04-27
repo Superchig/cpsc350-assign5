@@ -7,15 +7,14 @@ TreeNode::TreeNode()
   right = nullptr;
 }
 
-TreeNode::TreeNode(int k)
+TreeNode::TreeNode(int k, char v)
 {
   key = k;
+  value = v;
   left = nullptr;
   right = nullptr;
 }
 
-// Left to us to implement
-// TODO: Check if correctly implemented
 TreeNode::~TreeNode()
 {
   if (left) {

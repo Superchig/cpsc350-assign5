@@ -8,25 +8,21 @@ BST::BST()
   root = nullptr;
 }
 
-// Left up to us to implement
-// TODO: Check if correctly implemented
 BST::~BST()
 {
-  if (root)
-  {
+  if (root) {
     delete root;
   }
 }
 
 void BST::printTree(TreeNode *node)
 {
-  if (node == nullptr)
-  {
+  if (node == nullptr) {
     return;
   }
 
   printTree(node->left);
-  cout << node->key << endl;
+  cout << node->key << ": " << node->value << endl;
   printTree(node->right);
 }
 
@@ -34,13 +30,11 @@ TreeNode *BST::getMax()
 {
   TreeNode *curr = root;
 
-  if (root == nullptr)
-  {
+  if (root == nullptr) {
     return nullptr;
   }
 
-  while (curr->right != nullptr)
-  {
+  while (curr->right != nullptr) {
     curr = curr->right;
   }
 
@@ -51,13 +45,11 @@ TreeNode *BST::getMin()
 {
   TreeNode *curr = root;
 
-  if (root == nullptr)
-  {
+  if (root == nullptr) {
     return nullptr;
   }
 
-  while (curr->left != nullptr)
-  {
+  while (curr->left != nullptr) {
     curr = curr->left;
   }
 
@@ -69,12 +61,12 @@ bool BST::isEmpty()
   return (root == nullptr);
 }
 
-void BST::insert(int value)
+void BST::insert(int key, char value)
 {
-  TreeNode *node = new TreeNode(value); // value is also the key in our value
+  TreeNode *node =
+      new TreeNode(key, value); // value is also the key in our value
 
-  if (root == nullptr)
-  {
+  if (root == nullptr) {
     // we have an empty tree
     root = node;
     return;
@@ -84,29 +76,24 @@ void BST::insert(int value)
   TreeNode *curr = root;
   TreeNode *parent = nullptr;
 
-  while (true)
-  {
+  while (true) {
     parent = curr;
 
     // Refactor / check to see if works?
-    if (value < curr->key)
-    {
+    if (key < curr->key) {
       curr = curr->left;
 
       // We've reached the end of the tree
-      if (curr == nullptr)
-      {
+      if (curr == nullptr) {
         parent->left = node;
         break;
       }
     }
-    else
-    {
+    else {
       curr = curr->right;
 
       // We've reached end of tree
-      if (curr == nullptr)
-      {
+      if (curr == nullptr) {
         parent->right = node;
         break;
       }
@@ -115,28 +102,47 @@ void BST::insert(int value)
 }
 
 // Normally would search for key
-bool BST::search(int value)
+TreeNode *BST::search(int key)
 {
-  if (isEmpty())
-  {
+  if (isEmpty()) {
+    return nullptr;
+  }
+
+  // Tree is not empty
+  TreeNode *current = root;
+  while (current->key != key) {
+    if (key < current->key) {
+      current = current->left;
+    }
+    else {
+      current = current->right;
+    }
+
+    if (current == nullptr) {
+      return nullptr;
+    }
+  }
+
+  return current;
+}
+
+bool BST::hasKey(int key)
+{
+  if (isEmpty()) {
     return false;
   }
 
   // Tree is not empty
   TreeNode *current = root;
-  while (current->key != value)
-  {
-    if (value < current->key)
-    {
+  while (current->key != key) {
+    if (key < current->key) {
       current = current->left;
     }
-    else
-    {
+    else {
       current = current->right;
     }
 
-    if (current == nullptr)
-    {
+    if (current == nullptr) {
       return false;
     }
   }
@@ -146,12 +152,10 @@ bool BST::search(int value)
 
 bool BST::deleteNode(int k)
 {
-  if (isEmpty())
-  {
+  if (isEmpty()) {
     return false;
   }
-  else if (!search(k))
-  {
+  else if (!hasKey(k)) {
     return false;
   }
 
@@ -162,40 +166,32 @@ bool BST::deleteNode(int k)
   // Usual code to find treenode.
   // We will also update pointers
   bool isLeft; // If the current is to the left of its parent
-  while (current->key != k)
-  {
+  while (current->key != k) {
     parent = current;
-    if (k < current->key)
-    {
+    if (k < current->key) {
       isLeft = true;
       current = current->left;
     }
-    else
-    {
+    else {
       isLeft = false;
       current = current->right;
     }
 
-    if (current == nullptr)
-    {
+    if (current == nullptr) {
       return false;
     }
   }
 
-  // If we made it here, then we've found the node now let's proceed to delete it.
-  // No children, leaf TreeNode
-  if (current->left == nullptr && current->right == nullptr)
-  {
-    if (current == root)
-    {
+  // If we made it here, then we've found the node now let's proceed to delete
+  // it. No children, leaf TreeNode
+  if (current->left == nullptr && current->right == nullptr) {
+    if (current == root) {
       root = nullptr;
     }
-    else if (isLeft)
-    {
+    else if (isLeft) {
       parent->left = nullptr;
     }
-    else
-    {
+    else {
       parent->right = nullptr;
     }
 
@@ -203,61 +199,49 @@ bool BST::deleteNode(int k)
     return true;
   }
   // One child and the child is left
-  else if (current->right == nullptr)
-  {
+  else if (current->right == nullptr) {
     // does not have a right child
 
-    if (current == root)
-    {
+    if (current == root) {
       root = current->left;
     }
-    else if (isLeft)
-    {
+    else if (isLeft) {
       parent->left = current->left;
     }
-    else
-    {
+    else {
       parent->right = current->left;
     }
 
     return true;
   }
   // One child and the child is right
-  else if (current->left == nullptr)
-  {
+  else if (current->left == nullptr) {
     // does not have a left child
 
-    if (current == root)
-    {
+    if (current == root) {
       // root = current->left;
       root = current->right;
     }
-    else if (isLeft)
-    {
+    else if (isLeft) {
       parent->left = current->right;
     }
-    else
-    {
+    else {
       parent->right = current->right;
     }
 
     return true;
   }
-  else
-  {
+  else {
     // The node has 2 children
     TreeNode *successor = getSuccessor(current);
 
-    if (current == root)
-    {
+    if (current == root) {
       root = successor;
     }
-    else if (isLeft)
-    {
+    else if (isLeft) {
       parent->left = successor;
     }
-    else
-    {
+    else {
       parent->right = successor;
     }
 
@@ -274,15 +258,13 @@ TreeNode *BST::getSuccessor(TreeNode *d)
   TreeNode *successor = d;
   TreeNode *current = d->right;
 
-  while (current != nullptr)
-  {
+  while (current != nullptr) {
     sp = successor;
     successor = current;
     current = current->left;
   }
 
-  if (successor != d->right)
-  {
+  if (successor != d->right) {
     // "Remove successor" by replacing it with its rightmost child
     // If child is null, then sp's new right child is null
     // If child actually had a node, then that becomes sp's new right child
