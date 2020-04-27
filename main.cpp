@@ -5,7 +5,7 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
-  BST tree;
+  BST<char> tree;
 
   tree.insert(10, 'a');
   tree.insert(12, 'b');
