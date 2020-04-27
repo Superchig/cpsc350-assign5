@@ -1,25 +1,35 @@
 #include "BST.h"
+#include "Student.h"
 #include <iostream>
 
 using namespace std;
 
+void printStudentTree(TreeNode<Student *> *node)
+{
+  if (!node) {
+    return;
+  }
+
+  printStudentTree(node->left);
+  node->value->printStudent();
+}
+
+void printStudentTree(BST<Student *> *tree)
+{
+  printStudentTree(tree->getRoot());
+}
+
 int main(int argc, char **argv)
 {
-  BST<char> tree;
+  BST<Student *> *tree = new BST<Student *>();
 
-  tree.insert(10, 'a');
-  tree.insert(12, 'b');
-  tree.insert(4, 'c');
-  tree.insert(22, 'd');
+  Student *stud = new Student();
+  tree->insert(1, stud);
 
-  tree.printTree();
+  printStudentTree(tree);
 
-  cout << "Does the tree have node k = 22? " << tree.hasKey(22) << endl;
-
-  cout << "Deleting node k = 22..." << endl;
-
-  tree.deleteNode(22);
-  tree.printTree();
+  delete tree;
+  delete stud;
 
   return 0;
 }

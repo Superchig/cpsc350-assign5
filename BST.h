@@ -30,6 +30,8 @@ public:
   // Print the BST tree from its root
   void printTree();
 
+  TreeNode<T> *getRoot();
+
 private:
   TreeNode<T> *root;
 };
@@ -323,4 +325,10 @@ template <class T>
 void BST<T>::printTree()
 {
   printTree(root);
+}
+
+template <class T>
+TreeNode<T> *BST<T>::getRoot()
+{
+  return root;
 }
