@@ -13,6 +13,7 @@ void printStudentTree(TreeNode<Student *> *node)
 
   printStudentTree(node->left);
   node->value->printStudent();
+  printStudentTree(node->right);
 }
 
 // Print out the information for all students in BST
@@ -45,10 +46,10 @@ void deallocateStudents(BST<Student *> *tree)
 
 int main(int argc, char **argv)
 {
-  BST<Student *> *studentDB = new BST<Student *>();
+  BST<Student *> *masterStudent = new BST<Student *>();
 
   Student *stud = new Student(1, "Jim Mij", "Freshman", "Business", 3.2, -1);
-  studentDB->insert(stud->getId(), stud);
+  masterStudent->insert(stud->getId(), stud);
 
   // Main user input loop
   while (true) {
@@ -75,7 +76,7 @@ int main(int argc, char **argv)
     getline(cin, input);
 
     if (input == "1") {
-      printStudentTree(studentDB);
+      printStudentTree(masterStudent);
     } else if (input == "14") {
       break;
     } else {
@@ -88,8 +89,8 @@ int main(int argc, char **argv)
   }
 
   // Deallocate students and delete trees
-  deallocateStudents(studentDB);
-  delete studentDB;
+  deallocateStudents(masterStudent);
+  delete masterStudent;
 
   return 0;
 }
