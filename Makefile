@@ -3,7 +3,7 @@ CXX=g++
 
 all: assignment5.exe
 
-assignment5.exe: main.cpp Student.o
+assignment5.exe: main.cpp Student.o Person.o
 	$(CXX) $(CPPFLAGS) $^ -o $@
 
 clean:

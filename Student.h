@@ -1,12 +1,12 @@
+#include "Person.h"
 #include <iostream>
 
 using namespace std;
 
-class Student {
+class Student : public Person {
 private:
-  int studentId;
-  string name;
-  string level; // Could be "freshman", "sophomore", "junior", or "senior"
+  // Student's level could be "freshman", "sophomore", "junior", or "senior"
+
   string major;
   double gpa;
   int advisor; // Holds the faculty ID of their advisor
@@ -17,10 +17,6 @@ public:
   // Overloaded constructor
   Student(int studentId, string name, string level, string major, double gpa,
           int advisor);
-  
-  // Accessors
-  // Returns the students' student ID
-  int getId();
   
   // Prints all the information for a student
   void printStudent();
