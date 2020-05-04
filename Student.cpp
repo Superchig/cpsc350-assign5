@@ -24,3 +24,8 @@ void Student::printInfo()
        << "\tGPA: " << gpa << '\n'
        << "\tAdvisor ID: " << advisor << '\n';
 }
+
+int Student::getAdvisor()
+{
+  return advisor;
+}

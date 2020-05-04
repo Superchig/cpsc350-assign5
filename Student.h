@@ -19,4 +19,6 @@ public:
           int advisor);
   
   void printInfo() override;
+
+  int getAdvisor();
 };
