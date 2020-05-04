@@ -15,7 +15,7 @@ Student::Student(int studentId, string name, string level, string major,
   this->advisor = advisor;
 }
 
-void Student::printStudent()
+void Student::printInfo()
 {
   cout << "Student ID: " << getId() << '\n'
        << "\tName: " << getName() << '\n'

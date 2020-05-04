@@ -14,6 +14,10 @@ Person::Person(int id, string name, string level)
   this->level = level;
 }
 
+Person::~Person()
+{
+}
+
 int Person::getId()
 {
   return id;
@@ -27,4 +31,8 @@ string Person::getName()
 string Person::getLevel()
 {
   return level;
+}
+
+void Person::printInfo()
+{
 }

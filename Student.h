@@ -18,6 +18,5 @@ public:
   Student(int studentId, string name, string level, string major, double gpa,
           int advisor);
   
-  // Prints all the information for a student
-  void printStudent();
+  void printInfo() override;
 };

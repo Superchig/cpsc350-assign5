@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 
 using namespace std;
@@ -12,8 +14,12 @@ public:
   Person();
   Person(int id, string name, string level);
 
+  virtual ~Person();
+
   // Accessors
   int getId();
   string getName();
   string getLevel();
+
+  virtual void printInfo() = 0;
 };

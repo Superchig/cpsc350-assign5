@@ -1,5 +1,6 @@
 #include "BST.h"
 #include "Student.h"
+#include "Faculty.h"
 #include <iostream>
 
 using namespace std;
@@ -12,7 +13,7 @@ void printStudentTree(TreeNode<Student *> *node)
   }
 
   printStudentTree(node->left);
-  node->value->printStudent();
+  node->value->printInfo();
   printStudentTree(node->right);
 }
 
@@ -44,12 +45,51 @@ void deallocateStudents(BST<Student *> *tree)
   deallocateStudents(tree->getRoot());
 }
 
+void printFacultyTree(TreeNode<Faculty *> *node)
+{
+  if (!node) {
+    return;
+  }
+
+  printFacultyTree(node->left);
+  node->value->printInfo();
+  printFacultyTree(node->right);
+}
+
+void printFacultyTree(BST<Faculty *> *tree)
+{
+  printFacultyTree(tree->getRoot());
+}
+
+void deallocateFaculty(TreeNode<Faculty *> *node)
+{
+  if (node->left) {
+    deallocateFaculty(node->left);
+  }
+  if (node->right) {
+    deallocateFaculty(node->right);
+  }
+
+  delete node->value;
+}
+
+void deallocateFaculty(BST<Faculty *> *tree)
+{
+  if (tree->isEmpty()) {
+    return;
+  }
+
+  deallocateFaculty(tree->getRoot());
+}
+
 int main(int argc, char **argv)
 {
   BST<Student *> *masterStudent = new BST<Student *>();
+  BST<Faculty *> *masterFaculty = new BST<Faculty *>();
 
   Student *stud = new Student(1, "Jim Mij", "Freshman", "Business", 3.2, -1);
   masterStudent->insert(stud->getId(), stud);
+  masterFaculty->insert(1, new Faculty());
 
   // Main user input loop
   while (true) {
@@ -77,6 +117,8 @@ int main(int argc, char **argv)
 
     if (input == "1") {
       printStudentTree(masterStudent);
+    } else if (input == "2") {
+      printFacultyTree(masterFaculty);
     } else if (input == "14") {
       break;
     } else {
@@ -91,6 +133,9 @@ int main(int argc, char **argv)
   // Deallocate students and delete trees
   deallocateStudents(masterStudent);
   delete masterStudent;
+
+  deallocateFaculty(masterFaculty);
+  delete masterFaculty;
 
   return 0;
 }
