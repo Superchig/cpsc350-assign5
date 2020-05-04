@@ -21,4 +21,5 @@ public:
   void printInfo() override;
 
   int getAdvisor();
+  void setAdvisor(int advisorID);
 };

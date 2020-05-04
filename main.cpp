@@ -1,6 +1,6 @@
 #include "BST.h"
-#include "Student.h"
 #include "Faculty.h"
+#include "Student.h"
 #include <iostream>
 
 using namespace std;
@@ -45,6 +45,7 @@ void deallocateStudents(BST<Student *> *tree)
   deallocateStudents(tree->getRoot());
 }
 
+// Helper function for printFacultyTree
 void printFacultyTree(TreeNode<Faculty *> *node)
 {
   if (!node) {
@@ -56,11 +57,13 @@ void printFacultyTree(TreeNode<Faculty *> *node)
   printFacultyTree(node->right);
 }
 
+// Prints out the information for all faculty in a BST
 void printFacultyTree(BST<Faculty *> *tree)
 {
   printFacultyTree(tree->getRoot());
 }
 
+// Deallocates memory for the faculty in a tree
 void deallocateFaculty(TreeNode<Faculty *> *node)
 {
   if (node->left) {
@@ -82,14 +85,24 @@ void deallocateFaculty(BST<Faculty *> *tree)
   deallocateFaculty(tree->getRoot());
 }
 
+// Assign a Faculty to a Student as its advisor, assign the Student to the Faculty
+// as an advisee
+void connectPeople(Student *advisee, Faculty *advisor)
+{
+  advisee->setAdvisor(advisor->getId());
+  advisor->addAdvisee(advisee->getId());
+}
+
 int main(int argc, char **argv)
 {
   BST<Student *> *masterStudent = new BST<Student *>();
   BST<Faculty *> *masterFaculty = new BST<Faculty *>();
 
-  Student *stud = new Student(1, "Jim Mij", "Freshman", "Business", 3.2, -1);
-  masterStudent->insert(stud->getId(), stud);
-  masterFaculty->insert(1, new Faculty());
+  Student *defaultStud = new Student(1, "Jim Mij", "Freshman", "Business", 3.2, 1);
+  Faculty *defaultFac = new Faculty(1, "John Nhoj", "Lecturer", "School of Business");
+  connectPeople(defaultStud, defaultFac);
+  masterStudent->insert(defaultStud->getId(), defaultStud);
+  masterFaculty->insert(defaultFac->getId(), defaultFac);
 
   // Main user input loop
   while (true) {
@@ -115,16 +128,54 @@ int main(int argc, char **argv)
 
     getline(cin, input);
 
-    if (input == "1") {
+    if (input == "1") { // Print all studen tinfo
       printStudentTree(masterStudent);
-    } else if (input == "2") {
+    }
+    else if (input == "2") { // Print all faculty info
       printFacultyTree(masterFaculty);
-    } else if (input == "14") {
+    }
+    else if (input == "3") { // Print student info from id
+      cout << "Input student id: ";
+      string inputIdStr;
+      getline(cin, inputIdStr);
+      int inputId = stoi(inputIdStr);
+
+      if (masterStudent->hasKey(inputId)) {
+        masterStudent->search(inputId)->value->printInfo();
+      }
+      else {
+        cout << "No student currently has that id!" << endl;
+      }
+    }
+    else if (input == "5") { // Print faculty advisor info from student id
+      cout << "Input student id: ";
+      string inputIdStr;
+      getline(cin, inputIdStr);
+      int inputId = stoi(inputIdStr);
+
+      if (masterStudent->hasKey(inputId)) { // Found student
+        Student *stud = masterStudent->search(inputId)->value;
+        int advisorID = stud->getAdvisor();
+
+        if (masterFaculty->hasKey(advisorID)) { // Found faculty
+          Faculty *advisor = masterFaculty->search(advisorID)->value;
+          advisor->printInfo();
+        }
+        else { // Could not find faculty
+          cout << "This student's faculty id is invalid!" << endl;
+        }
+      }
+      else { // Could not find student
+        cout << "No student currently has that id!" << endl;
+      }
+    }
+    else if (input == "14") {
       break;
-    } else {
+    }
+    else {
       cout << "Sorry, that input is currently either invalid or not implemented yet." << endl;
     }
-    
+
     cout << "Press enter to continue..." << endl;
     string unused;
     getline(cin, unused);

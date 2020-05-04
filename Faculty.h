@@ -3,7 +3,7 @@
 
 class Faculty : public Person {
 private:
-  // Faculty's level is lecturer, assistant prof, or associate prof
+  // Faculty's level is Lecturer, Assistant Prof, or Associate Prof
 
   string department;
   DoublyLinkedList<int>* adviseeIds;
@@ -13,6 +13,8 @@ public:
   Faculty(int id, string name, string level, string department);
 
   ~Faculty() override;
+
+  void addAdvisee(int adviseeId);
 
   void printInfo() override;
 };

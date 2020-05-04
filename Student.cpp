@@ -29,3 +29,8 @@ int Student::getAdvisor()
 {
   return advisor;
 }
+
+void Student::setAdvisor(int advisorID)
+{
+  this->advisor = advisorID;
+}

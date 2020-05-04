@@ -33,3 +33,8 @@ void Faculty::printInfo()
   }
   cout << endl;
 }
+
+void Faculty::addAdvisee(int adviseeId)
+{
+  adviseeIds->insertBack(adviseeId);
+}
