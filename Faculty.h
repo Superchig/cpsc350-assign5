@@ -16,5 +16,7 @@ public:
 
   void addAdvisee(int adviseeId);
 
+  DoublyLinkedList<int>* getAdviseeIds();
+
   void printInfo() override;
 };

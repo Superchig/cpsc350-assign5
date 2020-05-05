@@ -93,6 +93,29 @@ void connectPeople(Student *advisee, Faculty *advisor)
   advisor->addAdvisee(advisee->getId());
 }
 
+// Print the information for the advisees of a Faculty, given their id
+void printAdvisees(BST<Faculty *> *masterFaculty, BST<Student *> *masterStudent, int inputId)
+{
+  // Print faculty member's advisees
+  Faculty *facultyMember = masterFaculty->search(inputId)->value;
+  ListNode<int> *curr = facultyMember->getAdviseeIds()->getFrontNode();
+
+  while (curr) {
+    int studentId = curr->data;
+    Student *student = masterStudent->search(studentId)->value;
+
+    if (student) {
+      student->printInfo();
+    }
+    else {
+      cout << "No student has the id " << studentId << '!' << endl;
+      break;
+    }
+
+    curr = curr->next;
+  }
+}
+
 int main(int argc, char **argv)
 {
   BST<Student *> *masterStudent = new BST<Student *>();
@@ -147,6 +170,19 @@ int main(int argc, char **argv)
         cout << "No student currently has that id!" << endl;
       }
     }
+    else if (input == "4") {
+      cout << "Input faculty id: ";
+      string inputIdStr;
+      getline(cin, inputIdStr);
+      int inputId = stoi(inputIdStr);
+
+      if (masterFaculty->hasKey(inputId)) {
+        masterFaculty->search(inputId)->value->printInfo();
+      }
+      else {
+        cout << "No faculty member currently has that id!" << endl;
+      }
+    }
     else if (input == "5") { // Print faculty advisor info from student id
       cout << "Input student id: ";
       string inputIdStr;
@@ -168,6 +204,14 @@ int main(int argc, char **argv)
       else { // Could not find student
         cout << "No student currently has that id!" << endl;
       }
+    }
+    else if (input == "6") {
+      cout << "Input faculty id: ";
+      string inputIdStr;
+      getline(cin, inputIdStr);
+      int inputId = stoi(inputIdStr);
+
+      printAdvisees(masterFaculty, masterStudent, inputId);
     }
     else if (input == "14") {
       break;

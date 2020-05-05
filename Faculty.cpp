@@ -38,3 +38,7 @@ void Faculty::addAdvisee(int adviseeId)
 {
   adviseeIds->insertBack(adviseeId);
 }
+
+DoublyLinkedList<int>* Faculty::getAdviseeIds() {
+  return adviseeIds;
+}
