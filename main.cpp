@@ -116,6 +116,104 @@ void printAdvisees(BST<Faculty *> *masterFaculty, BST<Student *> *masterStudent,
   }
 }
 
+// Delete a student based off of user input
+// Designed to be used for option 8) Delete a student given an id
+void deleteStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty)
+{
+  cout << "Input id of student to delete: ";
+  string idInput;
+  getline(cin, idInput);
+
+  int studentId;
+  try {
+    studentId = stoi(idInput);
+  }
+  catch (invalid_argument& e) {
+    cout << "That is not a valid student id!" << endl;
+    cout << "No student was deleted." << endl;
+    return;
+  }
+
+  if (!masterStudent->hasKey(studentId)) {
+    cout << "No student has that id!" << endl;
+    cout << "No student was deleted." << endl;
+    return;
+  }
+  Student *student = masterStudent->search(studentId)->value;
+
+  // Remove student from advisor's list of advisees
+  Faculty *advisor = masterFaculty->search(student->getAdvisor())->value;
+  advisor->getAdviseeIds()->remove(studentId);
+  cout << "Removed student " << student->getName() << " from advisor " << advisor->getName() << endl;
+
+  // Remove student from tree of Students, deallocate them
+  masterStudent->deleteNode(studentId);
+  delete student;
+
+  cout << "Student deleted!" << endl;
+}
+
+// Delete a faculty member based off of user input
+// Should prompt for a new faculty id for the advisees
+// Designed to be used for option 9) Delete a faculty member given an id
+void deleteFacultyFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty)
+{
+  cout << "Input id of faculty member to delete: ";
+  string idInput;
+  getline(cin, idInput);
+
+  int facultyId;
+  try {
+    facultyId = stoi(idInput);
+  }
+  catch (invalid_argument& e) {
+    cout << "That is not a valid faculty id!" << endl;
+    cout << "No faculty member was deleted." << endl;
+    return;
+  }
+
+  if (!masterFaculty->hasKey(facultyId)) {
+    cout << "No faculty member has that id!" << endl;
+    cout << "No faculty member was deleted." << endl;
+    return;
+  }
+  Faculty *faculty = masterFaculty->search(facultyId)->value;
+
+  // Update advisees w/ user-specified advisor id
+  DoublyLinkedList<int> *advisees = faculty->getAdviseeIds();
+  if (!advisees->isEmpty())
+  {
+    cout << "This advisor has " << advisees->getSize() << " advisees." << endl;
+    cout << "Input the new advisor id for these advisees: ";
+    string newAdvisorIdInput;
+    getline(cin, newAdvisorIdInput);
+    int newAdvisorId = stoi(newAdvisorIdInput);
+
+    // Check if new advisor id is valid
+    if (!masterFaculty->hasKey(newAdvisorId)) {
+      cout << "No faculty member has that id!" << endl;
+      cout << "No faculty member was deleted." << endl;
+      return;
+    }
+    Faculty *newAdvisor = masterFaculty->search(newAdvisorId)->value;
+
+    // Iterate over each advisee and update them
+    ListNode<int> *curr = advisees->getFrontNode();
+    while (curr) {
+      Student *advisee = masterStudent->search(curr->data)->value;
+      connectPeople(advisee, newAdvisor);
+
+      curr = curr->next;
+    }
+
+    cout << "Advisees updated!" << endl;
+  }
+
+  // Remove faculty member from tree, deallocate faculty member
+  masterFaculty->deleteNode(faculty->getId());
+  delete faculty;
+}
+
 int main(int argc, char **argv)
 {
   BST<Student *> *masterStudent = new BST<Student *>();
@@ -236,6 +334,9 @@ int main(int argc, char **argv)
         --studentIdCount;
       }
     }
+    else if (input == "8") { // Delete student given id
+      deleteStudentFromUser(masterStudent, masterFaculty);
+    }
     else if (input == "9") { // Add new faculty member
       ++facultyIdCount;
 
@@ -243,6 +344,9 @@ int main(int argc, char **argv)
       masterFaculty->insert(faculty->getId(), faculty);
 
       cout << "New faculty member created!" << endl;
+    }
+    else if (input == "10") { // Delete faculty member given id
+      deleteFacultyFromUser(masterStudent, masterFaculty);
     }
     else if (input == "14") { // Exit program
       break;
