@@ -173,7 +173,7 @@ int main(int argc, char **argv)
         cout << "No student currently has that id!" << endl;
       }
     }
-    else if (input == "4") {
+    else if (input == "4") { // Find and disply information given the faculty id
       cout << "Input faculty id: ";
       string inputIdStr;
       getline(cin, inputIdStr);
@@ -244,7 +244,7 @@ int main(int argc, char **argv)
 
       cout << "New faculty member created!" << endl;
     }
-    else if (input == "14") {
+    else if (input == "14") { // Exit program
       break;
     }
     else {
