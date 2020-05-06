@@ -8,7 +8,8 @@ Student::Student()
 }
 
 Student::Student(int studentId, string name, string level, string major,
-                 double gpa, int advisor) : Person(studentId, name, level)
+                 double gpa, int advisor)
+    : Person(studentId, name, level)
 {
   this->major = major;
   this->gpa = gpa;
@@ -33,4 +34,60 @@ int Student::getAdvisor()
 void Student::setAdvisor(int advisorID)
 {
   this->advisor = advisorID;
+}
+
+Student *Student::newFromUser(int studentId)
+{
+  // For obtaining the student id from the user
+  // cout << "Input student id: ";
+  // string idInput;
+  // getline(cin, idInput);
+  // int studentId = stoi(idInput);
+
+  cout << "Input name: ";
+  string name;
+  getline(cin, name);
+
+  string level;
+  while (true) {
+    cout << "Choose a student level." << '\n'
+         << "\tfreshman" << '\n'
+         << "\tsophomore" << '\n'
+         << "\tjunior" << '\n'
+         << "\tsenior" << '\n'
+         << "\tgraduate" << endl;
+    cout << "Input choice: ";
+    getline(cin, level);
+
+    // Make level lowercase
+    for (size_t i = 0; i < level.size(); ++i) {
+      level.at(i) = tolower(level.at(i));
+    }
+
+    // Check if level is valid
+    if (level != "freshman" && level != "sophomore" && level != "junior" && level != "senior" && level != "graduate") {
+      cout << "That is an invalid student level!" << endl;
+      cout << "Try again." << endl;
+    }
+    else {
+      break;
+    }
+  }
+
+  cout << "Input major: ";
+  string major;
+  getline(cin, major);
+
+  cout << "Input gpa: ";
+  string gpaInput;
+  getline(cin, gpaInput);
+  double gpa = stod(gpaInput);
+
+  cout << "Input advisor id (-1 for no advisor): ";
+  string advisorInput;
+  getline(cin, advisorInput);
+  double advisorId = stoi(advisorInput);
+
+  Student *result = new Student(studentId, name, level, major, gpa, advisorId);
+  return result;
 }

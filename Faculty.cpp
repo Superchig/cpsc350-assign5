@@ -39,6 +39,46 @@ void Faculty::addAdvisee(int adviseeId)
   adviseeIds->insertBack(adviseeId);
 }
 
-DoublyLinkedList<int>* Faculty::getAdviseeIds() {
+DoublyLinkedList<int>* Faculty::getAdviseeIds()
+{
   return adviseeIds;
+}
+
+Faculty *Faculty::newFromUser(int facultyId)
+{
+  cout << "Input name: ";
+  string name;
+  getline(cin, name);
+
+  // Obtain valid faculty level
+  string level;
+  while (true) {
+    cout << "Choose a faculty level." << '\n'
+         << "\tlecturer" << '\n'
+         << "\tassistant professor" << '\n'
+         << "\tassociate professor" << endl;
+    cout << "Input choice: ";
+    getline(cin, level);
+
+    // Make level lowercase
+    for (size_t i = 0; i < level.size(); ++i) {
+      level.at(i) = tolower(level.at(i));
+    }
+
+    // Check if level is valid
+    if (level != "lecturer" && level != "assistant professor" && level != "associate professor") {
+      cout << "That is an invalid faculty level!" << endl;
+      cout << "Try again." << endl;
+    }
+    else {
+      break;
+    }
+  }
+
+  cout << "Input department: ";
+  string department;
+  getline(cin, department);
+
+  Faculty *result = new Faculty(facultyId, name, level, department);
+  return result;
 }

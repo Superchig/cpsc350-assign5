@@ -22,4 +22,7 @@ public:
 
   int getAdvisor();
   void setAdvisor(int advisorID);
+
+  // Prompt the user for information about a new Student, then return that Student
+  static Student *newFromUser(int studentId);
 };

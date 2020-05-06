@@ -121,8 +121,11 @@ int main(int argc, char **argv)
   BST<Student *> *masterStudent = new BST<Student *>();
   BST<Faculty *> *masterFaculty = new BST<Faculty *>();
 
-  Student *defaultStud = new Student(1, "Jim Mij", "Freshman", "Business", 3.2, 1);
-  Faculty *defaultFac = new Faculty(1, "John Nhoj", "Lecturer", "School of Business");
+  int studentIdCount = 1; // Equivalent to the most recent student id
+  int facultyIdCount = 1; // Equivalent to the most recent faculty id
+
+  Student *defaultStud = new Student(1, "Jim Mij", "freshman", "Business", 3.2, 1);
+  Faculty *defaultFac = new Faculty(1, "John Nhoj", "lecturer", "School of Business");
   connectPeople(defaultStud, defaultFac);
   masterStudent->insert(defaultStud->getId(), defaultStud);
   masterFaculty->insert(defaultFac->getId(), defaultFac);
@@ -212,6 +215,34 @@ int main(int argc, char **argv)
       int inputId = stoi(inputIdStr);
 
       printAdvisees(masterFaculty, masterStudent, inputId);
+    }
+    else if (input == "7") { // Add new student
+      ++studentIdCount;
+
+      Student *student = Student::newFromUser(studentIdCount);
+
+      int advisorId = student->getAdvisor();
+      if (advisorId == -1 || masterFaculty->hasKey(advisorId)) { // A faculty member has the student's advisor id
+        masterStudent->insert(student->getId(), student);
+        Faculty *advisor = masterFaculty->search(student->getAdvisor())->value;
+        connectPeople(student, advisor);
+
+        cout << "New student created!" << endl;
+      }
+      else { // No faculty member has id
+        cout << "No faculty member has the id: " << advisorId << "!" << endl;
+        cout << "A new student was not created." << endl;
+        delete student;
+        --studentIdCount;
+      }
+    }
+    else if (input == "9") { // Add new faculty member
+      ++facultyIdCount;
+
+      Faculty *faculty = Faculty::newFromUser(facultyIdCount);
+      masterFaculty->insert(faculty->getId(), faculty);
+
+      cout << "New faculty member created!" << endl;
     }
     else if (input == "14") {
       break;
