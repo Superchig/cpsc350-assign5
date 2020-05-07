@@ -214,6 +214,44 @@ void deleteFacultyFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
   delete faculty;
 }
 
+// Change a student's advisor id based off of user input
+// Designed to be used in 11) Change student's advisor given ids
+void changeStudAdvFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty)
+{
+  cout << "Input id of student to modify: ";
+  string studentIdInput;
+  getline(cin, studentIdInput);
+  int studentId = stoi(studentIdInput);
+
+  // Abort if student id is not valid
+  if (!masterStudent->hasKey(studentId)) {
+    cout << "No student has that id!" << endl;
+    cout << "Students were not modified." << endl;
+    return;
+  }
+  
+  Student *student = masterStudent->search(studentId)->value;
+
+  cout << "Input id of new advisor for student: ";
+  string advisorIdInput;
+  getline(cin, advisorIdInput);
+  int advisorId = stoi(advisorIdInput);
+
+  // Abort if advisor id is not valid
+  if (!masterFaculty->hasKey(advisorId)) {
+    cout << "No advisor has that id!" << endl;
+    cout << "Students were not modified." << endl;
+    return;
+  }
+
+  Faculty *oldAdvisor = masterFaculty->search(student->getAdvisor())->value;
+  Faculty *newAdvisor = masterFaculty->search(advisorId)->value;
+
+  // Update student to have advisor's id, remove student from old advisor
+  oldAdvisor->getAdviseeIds()->remove(studentId);
+  connectPeople(student, newAdvisor);
+}
+
 int main(int argc, char **argv)
 {
   BST<Student *> *masterStudent = new BST<Student *>();
@@ -223,10 +261,12 @@ int main(int argc, char **argv)
   int facultyIdCount = 1; // Equivalent to the most recent faculty id
 
   Student *defaultStud = new Student(1, "Jim Mij", "freshman", "Business", 3.2, 1);
-  Faculty *defaultFac = new Faculty(1, "John Nhoj", "lecturer", "School of Business");
+  Faculty *defaultFac = new Faculty(++facultyIdCount, "John Nhoj", "lecturer", "School of Business");
+  Faculty *defaultFac2 = new Faculty(++facultyIdCount, "Carl Lrac", "associate professor", "Physics");
   connectPeople(defaultStud, defaultFac);
   masterStudent->insert(defaultStud->getId(), defaultStud);
   masterFaculty->insert(defaultFac->getId(), defaultFac);
+  masterFaculty->insert(defaultFac2->getId(), defaultFac2);
 
   // Main user input loop
   while (true) {
@@ -347,6 +387,9 @@ int main(int argc, char **argv)
     }
     else if (input == "10") { // Delete faculty member given id
       deleteFacultyFromUser(masterStudent, masterFaculty);
+    }
+    else if (input == "11") { // Change student's advisor given id and new faculty id
+      changeStudAdvFromUser(masterStudent, masterFaculty);
     }
     else if (input == "14") { // Exit program
       break;
