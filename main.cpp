@@ -257,10 +257,10 @@ int main(int argc, char **argv)
   BST<Student *> *masterStudent = new BST<Student *>();
   BST<Faculty *> *masterFaculty = new BST<Faculty *>();
 
-  int studentIdCount = 1; // Equivalent to the most recent student id
-  int facultyIdCount = 1; // Equivalent to the most recent faculty id
+  int studentIdCount = 0; // Equivalent to the most recent student id
+  int facultyIdCount = 0; // Equivalent to the most recent faculty id
 
-  Student *defaultStud = new Student(1, "Jim Mij", "freshman", "Business", 3.2, 1);
+  Student *defaultStud = new Student(++studentIdCount, "Jim Mij", "freshman", "Business", 3.2, 1);
   Faculty *defaultFac = new Faculty(++facultyIdCount, "John Nhoj", "lecturer", "School of Business");
   Faculty *defaultFac2 = new Faculty(++facultyIdCount, "Carl Lrac", "associate professor", "Physics");
   connectPeople(defaultStud, defaultFac);
