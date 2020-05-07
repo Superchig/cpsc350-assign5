@@ -320,7 +320,7 @@ int main(int argc, char **argv)
       Student *student = Student::newFromUser(studentIdCount);
 
       int advisorId = student->getAdvisor();
-      if (advisorId == -1 || masterFaculty->hasKey(advisorId)) { // A faculty member has the student's advisor id
+      if (masterFaculty->hasKey(advisorId)) { // A faculty member has the student's advisor id
         masterStudent->insert(student->getId(), student);
         Faculty *advisor = masterFaculty->search(student->getAdvisor())->value;
         connectPeople(student, advisor);
@@ -328,7 +328,7 @@ int main(int argc, char **argv)
         cout << "New student created!" << endl;
       }
       else { // No faculty member has id
-        cout << "No faculty member has the id: " << advisorId << "!" << endl;
+        cout << "No faculty member has the id: " << advisorId << endl;
         cout << "A new student was not created." << endl;
         delete student;
         --studentIdCount;

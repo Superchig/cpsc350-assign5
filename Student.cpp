@@ -83,7 +83,7 @@ Student *Student::newFromUser(int studentId)
   getline(cin, gpaInput);
   double gpa = stod(gpaInput);
 
-  cout << "Input advisor id (-1 for no advisor): ";
+  cout << "Input advisor id: ";
   string advisorInput;
   getline(cin, advisorInput);
   double advisorId = stoi(advisorInput);
