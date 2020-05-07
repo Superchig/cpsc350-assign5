@@ -82,3 +82,18 @@ Faculty *Faculty::newFromUser(int facultyId)
   Faculty *result = new Faculty(facultyId, name, level, department);
   return result;
 }
+
+bool Faculty::hasAdviseeId(int adviseeId)
+{
+  ListNode<int> *curr = adviseeIds->getFrontNode();
+
+  while (curr) {
+    if (curr->data == adviseeId) {
+      return true;
+    }
+
+    curr = curr->next;
+  }
+
+  return false;
+}

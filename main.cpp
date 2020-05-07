@@ -250,6 +250,60 @@ void changeStudAdvFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
   // Update student to have advisor's id, remove student from old advisor
   oldAdvisor->getAdviseeIds()->remove(studentId);
   connectPeople(student, newAdvisor);
+  cout << "Student's advisor changed" << endl;
+}
+
+// Remove advisee from faculty member given ids
+// Designed to be used in 12) remove advisee from faculty member given ids
+void removeFacAdviseeFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty)
+{
+  cout << "Input id of faculty member to modify: ";
+  string facultyIdInput;
+  getline(cin, facultyIdInput);
+  int facultyId = stoi(facultyIdInput);
+
+  // Check if faculty id is valid
+  if (!masterFaculty->hasKey(facultyId)) {
+    cout << "No faculty member has that id." << endl;
+    cout << "The database has not been modified." << endl;
+    return;
+  }
+
+  Faculty *faculty = masterFaculty->search(facultyId)->value;
+
+  cout << "Input id of student advisee to remove from faculty: ";
+  string adviseeIdInput;
+  getline(cin, adviseeIdInput);
+  int adviseeId = stoi(adviseeIdInput);
+
+  // Check if faculty member actually has advisee
+  if (!faculty->hasAdviseeId(adviseeId)) {
+    cout << "Faculty member does not have that student as an advisee!" << endl;
+    cout << "The database has not been modified." << endl;
+    return;
+  }
+
+  Student *advisee = masterStudent->search(adviseeId)->value;
+
+  cout << "Since the student is no longer an advisee, they need a new advisor." << endl;
+  cout << "Input id of student's new faculty advisor: ";
+  string newAdvisorIdInput;
+  getline(cin, newAdvisorIdInput);
+  int newAdvisorId = stoi(newAdvisorIdInput);
+
+  // Check if new advisor id is valid
+  if (!masterFaculty->hasKey(newAdvisorId)) {
+    cout << "That is not a valid faculty member id!" << endl;
+    cout << "The database has not been modified." << endl;
+    return;
+  }
+
+  Faculty *newAdvisor = masterFaculty->search(newAdvisorId)->value;
+
+  // Update faculty and student
+  faculty->getAdviseeIds()->remove(adviseeId);
+  connectPeople(advisee, newAdvisor);
+  cout << "Removed advisee from faculty member!" << endl;
 }
 
 int main(int argc, char **argv)
@@ -390,6 +444,9 @@ int main(int argc, char **argv)
     }
     else if (input == "11") { // Change student's advisor given id and new faculty id
       changeStudAdvFromUser(masterStudent, masterFaculty);
+    }
+    else if (input == "12") { // Remove an advisee from a faculty member given ids
+      removeFacAdviseeFromUser(masterStudent, masterFaculty);
     }
     else if (input == "14") { // Exit program
       break;

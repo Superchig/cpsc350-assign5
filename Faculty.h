@@ -15,10 +15,11 @@ public:
   ~Faculty() override;
 
   void addAdvisee(int adviseeId);
+  void printInfo() override;
+  // Returns whether or not this faculty member has a student as their advisee
+  bool hasAdviseeId(int adviseeId);
 
   DoublyLinkedList<int>* getAdviseeIds();
-
-  void printInfo() override;
 
   static Faculty* newFromUser(int facultyId);
 };
