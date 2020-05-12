@@ -573,12 +573,10 @@ int main(int argc, char **argv)
   BST<Student *> *masterStudent = readStudentsFromFile("studentTable");
   BST<Faculty *> *masterFaculty = readFacultyFromFile("facultyTable");
 
-  TreeNode<Student *> *maxStudent = masterStudent->getMax();
-  TreeNode<Faculty *> *maxFaculty = masterFaculty->getMax();
   // Equivalent to the most recent student id
-  int studentIdCount = maxStudent ? maxStudent->key : 0;
+  int studentIdCount = masterStudent->isEmpty() ? 0 : masterStudent->getMax()->key;
   // Equivalent to the most recent faculty id
-  int facultyIdCount = maxFaculty ? maxFaculty->key : 1000;
+  int facultyIdCount = masterFaculty->isEmpty() ? 1000 : masterFaculty->getMax()->key;
 
   // Main user input loop
   while (true) {

@@ -1,0 +1,8 @@
+START_STUDENT
+id: 1
+name: Adam Mada
+level: junior
+major: Chemistry
+gpa: 3.3
+advisor: 1001
+END_STUDENT

@@ -1,0 +1,7 @@
+START_FACULTY
+id: 1001
+name: Nossel Lesson
+level: assistant professor
+department: Physics
+advisees: 1
+END_FACULTY
