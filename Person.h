@@ -26,5 +26,13 @@ public:
   void setName(string name);
   void setLevel(string level);
 
+  // Overload operators
+  bool operator==(Person& other);
+  bool operator!=(Person& other);
+  bool operator<(Person& other);
+  bool operator<=(Person& other);
+  bool operator>(Person& other);
+  bool operator>=(Person& other);
+
   virtual void printInfo() = 0;
 };

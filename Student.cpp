@@ -112,8 +112,8 @@ void Student::setGpa(double gpa)
   this->gpa = gpa;
 }
 
-Student* Student::copy()
+Student *Student::copy()
 {
-  Student* studentCopy = new Student(getId(), getName(), getLevel(), getMajor(), getGpa(), getAdvisor());
+  Student *studentCopy = new Student(getId(), getName(), getLevel(), getMajor(), getGpa(), getAdvisor());
   return studentCopy;
 }

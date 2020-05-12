@@ -51,3 +51,33 @@ void Person::setLevel(string level)
 {
   this->level = level;
 }
+
+bool Person::operator==(Person& other)
+{
+  return id == other.id;
+}
+
+bool Person::operator!=(Person& other)
+{
+  return id != other.id;
+}
+
+bool Person::operator<(Person& other)
+{
+  return id < other.id;
+}
+
+bool Person::operator<=(Person& other)
+{
+  return id <= other.id;
+}
+
+bool Person::operator>(Person& other)
+{
+  return id > other.id;
+}
+
+bool Person::operator>=(Person& other)
+{
+  return id >= other.id;
+}

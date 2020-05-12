@@ -1,12 +1,4 @@
 START_STUDENT
-id: 2
-name: Jimmy Neutron
-level: senior
-major: 4.0
-gpa: 4
-advisor: 1002
-END_STUDENT
-START_STUDENT
 id: 6
 name: Thomas Triam
 level: sophomore
@@ -28,5 +20,5 @@ name: Maxwell Cero
 level: sophomore
 major: Chemistry
 gpa: 3.8
-advisor: 1001
+advisor: 1002
 END_STUDENT
