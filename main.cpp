@@ -134,7 +134,7 @@ void addStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFac
 {
   if (masterFaculty->isEmpty()) {
     cout << "There are no faculty members, and every student must have a faculty advisor, "
-         << "so a student cannot yet be created." << endl;
+         << "so a student cannot currently be created." << endl;
     cout << "There must be at least 1 faculty member before there can be a student." << endl;
     return;
   }
@@ -223,10 +223,22 @@ void deleteFacultyFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
     cout << "No faculty member was deleted." << endl;
     return;
   }
-  Faculty *faculty = masterFaculty->search(facultyId)->value;
+  TreeNode<Faculty *> *facultyNode = masterFaculty->search(facultyId);
+  Faculty *faculty = facultyNode->value;
+
+  DoublyLinkedList<int> *advisees = faculty->getAdviseeIds();
+  // If this faculty member is the only one, and they have advisees, they can't
+  // be deleted, since their advisees would have no new advisor.
+  if (facultyNode == masterFaculty->getRoot() && (!facultyNode->left && !facultyNode->right) && !advisees->isEmpty()) {
+    cout << "This faculty member is the only one, and they have advisees." << endl;
+    cout << "Since students must always have a faculty advisor, and there are no other faculty members, "
+         << "this faculty member cannot currently be deleted." << endl;
+    cout << "To delete this faculty member, it must have no students or there must be another faculty member." << endl;
+    cout << "Aborting command..." << endl;
+    return;
+  }
 
   // Update advisees w/ user-specified advisor id
-  DoublyLinkedList<int> *advisees = faculty->getAdviseeIds();
   if (!advisees->isEmpty()) {
     cout << "This advisor has " << advisees->getSize() << " advisees." << endl;
     cout << "Students must always have an advisor, so these advisees need a new advisor." << endl;
