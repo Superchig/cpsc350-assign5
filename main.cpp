@@ -397,6 +397,8 @@ void removeFacAdviseeFromUser(BST<Student *> *masterStudent, BST<Faculty *> *mas
   cout << "Removed advisee from faculty member!" << endl;
 }
 
+// Roll back to a previous state, assuming that any have been snapshotted
+// Designed to be used for 13) Rollback
 void rollbackFromUser(BST<Student *> *&masterStudent, BST<Faculty *> *&masterFaculty,
                       DoublyLinkedList<BST<Student *> *> *studSnapshots, DoublyLinkedList<BST<Faculty *> *> *facSnapshots)
 {
