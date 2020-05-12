@@ -16,6 +16,8 @@ I used http://www.cplusplus.com/reference/string/string/ for info on string meth
 
 I used https://docs.microsoft.com/en-us/cpp/standard-library/overloading-the-output-operator-for-your-own-classes?view=vs-2019 and https://en.cppreference.com/w/cpp/language/friend#Template_friends for information on overloading << and on having template friend functions of template classes.
 
+I used https://docs.microsoft.com/en-us/cpp/cpp/operator-overloading?view=vs-2019 for information on overloading operators like == and <.
+
 ## Compilation
 To compile,
 ```make```

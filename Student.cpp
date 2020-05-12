@@ -38,12 +38,6 @@ void Student::setAdvisor(int advisorID)
 
 Student *Student::newFromUser(int studentId)
 {
-  // For obtaining the student id from the user
-  // cout << "Input student id: ";
-  // string idInput;
-  // getline(cin, idInput);
-  // int studentId = stoi(idInput);
-
   cout << "Input name: ";
   string name;
   getline(cin, name);
@@ -78,15 +72,9 @@ Student *Student::newFromUser(int studentId)
   string major;
   getline(cin, major);
 
-  cout << "Input gpa: ";
-  string gpaInput;
-  getline(cin, gpaInput);
-  double gpa = stod(gpaInput);
+  double gpa = getUserDouble("Input gpa: ");
 
-  cout << "Input advisor id: ";
-  string advisorInput;
-  getline(cin, advisorInput);
-  double advisorId = stoi(advisorInput);
+  int advisorId = getUserInt("Input advisor id: ");
 
   Student *result = new Student(studentId, name, level, major, gpa, advisorId);
   return result;
@@ -116,4 +104,42 @@ Student *Student::copy()
 {
   Student *studentCopy = new Student(getId(), getName(), getLevel(), getMajor(), getGpa(), getAdvisor());
   return studentCopy;
+}
+
+int getUserInt(string prompt)
+{
+  while (true) {
+    cout << prompt;
+    string input;
+    getline(cin, input);
+    int userInt;
+
+    try {
+      userInt = stoi(input);
+      return userInt;
+    }
+    catch (invalid_argument &e) {
+      cout << "That input was not a valid int value!" << endl;
+      cout << "Please try again." << endl;
+    }
+  }
+}
+
+double getUserDouble(string prompt)
+{
+  while (true) {
+    cout << prompt;
+    string input;
+    getline(cin, input);
+    double userDouble;
+
+    try {
+      userDouble = stod(input);
+      return userDouble;
+    }
+    catch (invalid_argument &e) {
+      cout << "That input was not a valid double value!" << endl;
+      cout << "Please try again." << endl;
+    }
+  }
 }

@@ -36,3 +36,14 @@ public:
   // Prompt the user for information about a new Student, then return that Student
   static Student *newFromUser(int studentId);
 };
+
+// Obtain an int from user input, checking to make sure that the input is
+// actually an int.
+// Displays a prompt when asking for user input.
+// Placed in Student.h so that Student methods can use it.
+int getUserInt(string prompt);
+
+// Obtain a double from user input, checking to make sure that the input is
+// actually a double.
+// Displays a prompt when asking for user input.
+double getUserDouble(string prompt);

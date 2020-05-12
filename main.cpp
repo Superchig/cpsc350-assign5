@@ -127,10 +127,7 @@ void deallocateSnapshots(DoublyLinkedList<BST<T> *> *snapshots)
 // Designed to be used for option 6) given faculty id, print all advisees' info
 void printAdviseesFromUser(BST<Faculty *> *masterFaculty, BST<Student *> *masterStudent)
 {
-  cout << "Input faculty id: ";
-  string inputIdStr;
-  getline(cin, inputIdStr);
-  int inputId = stoi(inputIdStr);
+  int inputId = getUserInt("Input faculty id: ");
 
   if (!masterFaculty->hasKey(inputId)) {
     cout << "No faculty member currently has that id!" << endl;
@@ -201,19 +198,7 @@ void addStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFac
 void deleteStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty,
                            DoublyLinkedList<BST<Student *> *> *studSnapshots, DoublyLinkedList<BST<Faculty *> *> *facSnapshots)
 {
-  cout << "Input id of student to delete: ";
-  string idInput;
-  getline(cin, idInput);
-
-  int studentId;
-  try {
-    studentId = stoi(idInput);
-  }
-  catch (invalid_argument &e) {
-    cout << "That is not a valid student id!" << endl;
-    cout << "Aborting command..." << endl;
-    return;
-  }
+  int studentId = getUserInt("Input id of student to delete: ");
 
   if (!masterStudent->hasKey(studentId)) {
     cout << "No student has that id!" << endl;
@@ -242,19 +227,7 @@ void deleteStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
 void deleteFacultyFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty,
                            DoublyLinkedList<BST<Student *> *> *studSnapshots, DoublyLinkedList<BST<Faculty *> *> *facSnapshots)
 {
-  cout << "Input id of faculty member to delete: ";
-  string idInput;
-  getline(cin, idInput);
-
-  int facultyId;
-  try {
-    facultyId = stoi(idInput);
-  }
-  catch (invalid_argument &e) {
-    cout << "That is not a valid faculty id!" << endl;
-    cout << "Aborting command..." << endl;
-    return;
-  }
+  int facultyId = getUserInt("Input id of faculty member to delete: ");
 
   if (!masterFaculty->hasKey(facultyId)) {
     cout << "No faculty member has that id!" << endl;
@@ -280,10 +253,7 @@ void deleteFacultyFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
   if (!advisees->isEmpty()) {
     cout << "This advisor has " << advisees->getSize() << " advisees." << endl;
     cout << "Students must always have an advisor, so these advisees need a new advisor." << endl;
-    cout << "Input the new advisor id for these advisees: ";
-    string newAdvisorIdInput;
-    getline(cin, newAdvisorIdInput);
-    int newAdvisorId = stoi(newAdvisorIdInput);
+    int newAdvisorId = getUserInt("Input the new advisor id for these advisees: ");
 
     // Check if new advisor id is valid
     if (!masterFaculty->hasKey(newAdvisorId)) {
@@ -327,10 +297,7 @@ void deleteFacultyFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
 void changeStudAdvFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty,
                            DoublyLinkedList<BST<Student *> *> *studSnapshots, DoublyLinkedList<BST<Faculty *> *> *facSnapshots)
 {
-  cout << "Input id of student to modify: ";
-  string studentIdInput;
-  getline(cin, studentIdInput);
-  int studentId = stoi(studentIdInput);
+  int studentId = getUserInt("Input id of student to modify: ");
 
   // Abort if student id is not valid
   if (!masterStudent->hasKey(studentId)) {
@@ -341,10 +308,7 @@ void changeStudAdvFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
 
   Student *student = masterStudent->search(studentId)->value;
 
-  cout << "Input id of new advisor for student: ";
-  string advisorIdInput;
-  getline(cin, advisorIdInput);
-  int advisorId = stoi(advisorIdInput);
+  int advisorId = getUserInt("Input id of new advisor for student: ");
 
   // Abort if advisor id is not valid
   if (!masterFaculty->hasKey(advisorId)) {
@@ -369,10 +333,7 @@ void changeStudAdvFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
 void removeFacAdviseeFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty,
                               DoublyLinkedList<BST<Student *> *> *studSnapshots, DoublyLinkedList<BST<Faculty *> *> *facSnapshots)
 {
-  cout << "Input id of faculty member to modify: ";
-  string facultyIdInput;
-  getline(cin, facultyIdInput);
-  int facultyId = stoi(facultyIdInput);
+  int facultyId = getUserInt("Input id of faculty member to modify: ");
 
   // Check if faculty id is valid
   if (!masterFaculty->hasKey(facultyId)) {
@@ -383,10 +344,7 @@ void removeFacAdviseeFromUser(BST<Student *> *masterStudent, BST<Faculty *> *mas
 
   Faculty *faculty = masterFaculty->search(facultyId)->value;
 
-  cout << "Input id of student advisee to remove from faculty: ";
-  string adviseeIdInput;
-  getline(cin, adviseeIdInput);
-  int adviseeId = stoi(adviseeIdInput);
+  int adviseeId = getUserInt("Input id of student advisee to remove from faculty: ");
 
   // Check if faculty member actually has advisee
   if (!faculty->hasAdviseeId(adviseeId)) {
@@ -398,10 +356,7 @@ void removeFacAdviseeFromUser(BST<Student *> *masterStudent, BST<Faculty *> *mas
   Student *advisee = masterStudent->search(adviseeId)->value;
 
   cout << "Since the student is no longer an advisee, they need a new advisor." << endl;
-  cout << "Input id of student's new faculty advisor: ";
-  string newAdvisorIdInput;
-  getline(cin, newAdvisorIdInput);
-  int newAdvisorId = stoi(newAdvisorIdInput);
+  int newAdvisorId = getUserInt("Input id of student's new faculty advisor: ");
 
   // Check if new advisor id is valid
   if (!masterFaculty->hasKey(newAdvisorId)) {
@@ -699,10 +654,7 @@ int main(int argc, char **argv)
       printPersonTree<Faculty *>(masterFaculty);
     }
     else if (input == "3") { // Print student info from id
-      cout << "Input student id: ";
-      string inputIdStr;
-      getline(cin, inputIdStr);
-      int inputId = stoi(inputIdStr);
+      int inputId = getUserInt("Input student id: ");
 
       if (masterStudent->hasKey(inputId)) {
         masterStudent->search(inputId)->value->printInfo();
@@ -712,10 +664,7 @@ int main(int argc, char **argv)
       }
     }
     else if (input == "4") { // Find and disply information given the faculty id
-      cout << "Input faculty id: ";
-      string inputIdStr;
-      getline(cin, inputIdStr);
-      int inputId = stoi(inputIdStr);
+      int inputId = getUserInt("Input faculty id: ");
 
       if (masterFaculty->hasKey(inputId)) {
         masterFaculty->search(inputId)->value->printInfo();
@@ -725,10 +674,7 @@ int main(int argc, char **argv)
       }
     }
     else if (input == "5") { // Print faculty advisor info from student id
-      cout << "Input student id: ";
-      string inputIdStr;
-      getline(cin, inputIdStr);
-      int inputId = stoi(inputIdStr);
+      int inputId = getUserInt("Input student id: ");
 
       if (masterStudent->hasKey(inputId)) { // Found student
         Student *stud = masterStudent->search(inputId)->value;
