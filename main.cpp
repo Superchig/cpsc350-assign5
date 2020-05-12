@@ -772,7 +772,8 @@ int main(int argc, char **argv)
       break;
     }
     else {
-      cout << "Sorry, that input is currently either invalid or not implemented yet." << endl;
+      cout << "Sorry, that is not a valid choice." << endl;
+      cout << "Please try again." << endl;
     }
 
     cout << "Press enter to continue..." << endl;
