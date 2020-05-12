@@ -30,6 +30,25 @@ public:
   // Returns the item at front of the list, without removing it
   T getFront();
 
+  // Overload << inline in class, to use across different templates
+  // Print all items in a list on the same line (no newlines)
+  friend ostream &operator<<(ostream &os, const DoublyLinkedList *list)
+  {
+    ListNode<T> *curr = list->front;
+    while (curr) {
+      os << curr->data;
+
+      // Print out a space as a separator if not at last item
+      if (curr->next) {
+        os << ' ';
+      }
+
+      curr = curr->next;
+    }
+
+    return os;
+  }
+
   // Returns a pointer to the first node
   ListNode<T> *getFrontNode();
 };

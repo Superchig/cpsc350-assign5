@@ -19,7 +19,12 @@ public:
   // Returns whether or not this faculty member has a student as their advisee
   bool hasAdviseeId(int adviseeId);
 
+  // Accessors
+  string getDepartment();
   DoublyLinkedList<int>* getAdviseeIds();
+
+  // Modifiers
+  void setDepartment(string department);
 
   static Faculty* newFromUser(int facultyId);
 };

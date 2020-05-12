@@ -97,3 +97,13 @@ bool Faculty::hasAdviseeId(int adviseeId)
 
   return false;
 }
+
+string Faculty::getDepartment()
+{
+  return department;
+}
+
+void Faculty::setDepartment(string department)
+{
+  this->department = department;
+}

@@ -94,9 +94,20 @@ void connectPeople(Student *advisee, Faculty *advisor)
   advisor->addAdvisee(advisee->getId());
 }
 
-// Print the information for the advisees of a Faculty, given their id
-void printAdvisees(BST<Faculty *> *masterFaculty, BST<Student *> *masterStudent, int inputId)
+// Print the information for the advisees of a Faculty based off of user input
+// Designed to be used for option 6) given faculty id, print all advisees' info
+void printAdviseesFromUser(BST<Faculty *> *masterFaculty, BST<Student *> *masterStudent)
 {
+  cout << "Input faculty id: ";
+  string inputIdStr;
+  getline(cin, inputIdStr);
+  int inputId = stoi(inputIdStr);
+
+  if (!masterFaculty->hasKey(inputId)) {
+    cout << "No faculty member currently has that id!" << endl;
+    return;
+  }
+
   // Print faculty member's advisees
   Faculty *facultyMember = masterFaculty->search(inputId)->value;
   ListNode<int> *curr = facultyMember->getAdviseeIds()->getFrontNode();
@@ -145,7 +156,7 @@ void deleteStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
   // Remove student from advisor's list of advisees
   Faculty *advisor = masterFaculty->search(student->getAdvisor())->value;
   advisor->getAdviseeIds()->remove(studentId);
-  cout << "Removed student " << student->getName() << " from advisor " << advisor->getName() << endl;
+  cout << "Removed student " << student->getName() << " from advisor " << advisor->getName() << "." << endl;
 
   // Remove student from tree of Students, deallocate them
   masterStudent->deleteNode(studentId);
@@ -250,7 +261,7 @@ void changeStudAdvFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
   // Update student to have advisor's id, remove student from old advisor
   oldAdvisor->getAdviseeIds()->remove(studentId);
   connectPeople(student, newAdvisor);
-  cout << "Student's advisor changed" << endl;
+  cout << "Student's advisor changed." << endl;
 }
 
 // Remove advisee from faculty member given ids
@@ -349,8 +360,7 @@ DoublyLinkedList<string> *split(string str, char delim)
   DoublyLinkedList<string> *result = new DoublyLinkedList<string>();
   string buffer;
 
-  for (size_t i = 0; i < str.size(); ++i)
-  {
+  for (size_t i = 0; i < str.size(); ++i) {
     char ch = str.at(i);
     if (ch == delim) {
       result->insertBack(buffer);
@@ -373,8 +383,7 @@ BST<Student *> *readStudentsFromFile(string fileName)
 
   string line;
   Student *student = nullptr;
-  while (getline(inputFile, line))
-  {
+  while (getline(inputFile, line)) {
     if (line == "START_STUDENT") {
       student = new Student();
       continue;
@@ -417,22 +426,106 @@ BST<Student *> *readStudentsFromFile(string fileName)
   return masterStudent;
 }
 
+void writeSubFacultyToFile(TreeNode<Faculty *> *node, ostream &output)
+{
+  if (!node) {
+    return;
+  }
+
+  Faculty *faculty = node->value;
+  writeSubFacultyToFile(node->left, output);
+  output << "START_FACULTY" << '\n'
+         << "id: " << faculty->getId() << '\n'
+         << "name: " << faculty->getName() << '\n'
+         << "level: " << faculty->getLevel() << '\n'
+         << "department: " << faculty->getDepartment() << '\n'
+         << "advisees: " << faculty->getAdviseeIds() << '\n'
+         << "END_FACULTY\n";
+  writeSubFacultyToFile(node->right, output);
+}
+
+void writeFacultyToFile(BST<Faculty *> *masterFaculty, string fileName)
+{
+  ofstream inputFile{fileName};
+
+  writeSubFacultyToFile(masterFaculty->getRoot(), inputFile);
+
+  inputFile.close();
+}
+
+void addStringOfIntsToList(DoublyLinkedList<int> *list, string stringOfInts)
+{
+  DoublyLinkedList<string> *substrings = split(stringOfInts, ' ');
+
+  ListNode<string> *curr = substrings->getFrontNode();
+  while (curr) {
+    // cout << "curr->data: " << curr->data << endl;
+    int studentId = stoi(curr->data);
+    list->insertBack(studentId);
+
+    curr = curr->next;
+  }
+
+  delete substrings;
+}
+
+BST<Faculty *> *readFacultyFromFile(string fileName)
+{
+  ifstream inputFile{fileName};
+  BST<Faculty *> *masterFaculty = new BST<Faculty *>();
+
+  string line;
+  Faculty *faculty = nullptr;
+  while (getline(inputFile, line)) {
+    if (line == "START_FACULTY") {
+      faculty = new Faculty();
+      continue;
+    }
+    else if (line == "END_FACULTY") {
+      masterFaculty->insert(faculty->getId(), faculty);
+      continue;
+    }
+
+    DoublyLinkedList<string> *substrings = split(line, ':');
+    string field = substrings->getFront();
+
+    string valueStr = substrings->getFrontNode()->next->data;
+    // Remove leading spaces from string
+    valueStr.erase(0, valueStr.find_first_not_of(' '));
+
+    if (field == "id") {
+      faculty->setId(stoi(valueStr));
+    }
+    else if (field == "name") {
+      faculty->setName(valueStr);
+    }
+    else if (field == "level") {
+      faculty->setLevel(valueStr);
+    }
+    else if (field == "department") {
+      faculty->setDepartment(valueStr);
+    }
+    else if (field == "advisees" && valueStr != "") {
+      addStringOfIntsToList(faculty->getAdviseeIds(), valueStr);
+    }
+
+    delete substrings;
+  }
+
+  return masterFaculty;
+}
+
 int main(int argc, char **argv)
 {
   BST<Student *> *masterStudent = readStudentsFromFile("studentTable");
+  BST<Faculty *> *masterFaculty = readFacultyFromFile("facultyTable");
   // BST<Student *> *masterStudent = new BST<Student *>();
-  BST<Faculty *> *masterFaculty = new BST<Faculty *>();
+  // BST<Faculty *> *masterFaculty = new BST<Faculty *>();
 
-  int studentIdCount = 0; // Equivalent to the most recent student id
-  int facultyIdCount = 0; // Equivalent to the most recent faculty id
-
-  // Student *defaultStud = new Student(++studentIdCount, "Jim Mij", "freshman", "Business", 3.2, 1);
-  // Faculty *defaultFac = new Faculty(++facultyIdCount, "John Nhoj", "lecturer", "School of Business");
-  // Faculty *defaultFac2 = new Faculty(++facultyIdCount, "Carl Lrac", "associate professor", "Physics");
-  // connectPeople(defaultStud, defaultFac);
-  // masterStudent->insert(defaultStud->getId(), defaultStud);
-  // masterFaculty->insert(defaultFac->getId(), defaultFac);
-  // masterFaculty->insert(defaultFac2->getId(), defaultFac2);
+  // Equivalent to the most recent student id
+  int studentIdCount = masterStudent->getMax()->key;
+  // Equivalent to the most recent faculty id
+  int facultyIdCount = masterFaculty->getMax()->key;
 
   // Main user input loop
   while (true) {
@@ -513,12 +606,7 @@ int main(int argc, char **argv)
       }
     }
     else if (input == "6") {
-      cout << "Input faculty id: ";
-      string inputIdStr;
-      getline(cin, inputIdStr);
-      int inputId = stoi(inputIdStr);
-
-      printAdvisees(masterFaculty, masterStudent, inputId);
+      printAdviseesFromUser(masterFaculty, masterStudent);
     }
     else if (input == "7") { // Add new student
       ++studentIdCount;
@@ -562,6 +650,7 @@ int main(int argc, char **argv)
     }
     else if (input == "14") { // Exit program
       writeStudentsToFile(masterStudent, "studentTable");
+      writeFacultyToFile(masterFaculty, "facultyTable");
       break;
     }
     else {
