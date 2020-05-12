@@ -22,3 +22,11 @@ major: Computer Science
 gpa: 3.12
 advisor: 1001
 END_STUDENT
+START_STUDENT
+id: 8
+name: Maxwell Cero
+level: sophomore
+major: Chemistry
+gpa: 3.8
+advisor: 1001
+END_STUDENT

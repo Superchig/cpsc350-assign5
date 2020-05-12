@@ -94,6 +94,17 @@ void makeSnapshots(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty,
 {
   studSnapshots->insertBack(copyPersonBST<Student *>(masterStudent));
   facSnapshots->insertBack(copyPersonBST<Faculty *>(masterFaculty));
+
+  // Delete oldest snapshots if there are more than 5
+  if (studSnapshots->getSize() > 5) {
+    BST<Student *> *oldestStudSnap = studSnapshots->removeFront();
+    BST<Faculty *> *oldestFacSnap = facSnapshots->removeFront();
+
+    deallocatePersonTree<Student *>(oldestStudSnap);
+    deallocatePersonTree<Faculty *>(oldestFacSnap);
+    delete oldestStudSnap;
+    delete oldestFacSnap;
+  }
 }
 
 // Deallocate dynamically allocated items held in a list of snapshots

@@ -3,7 +3,7 @@ id: 1001
 name: Nossel Lesson
 level: assistant professor
 department: Physics
-advisees: 6 7
+advisees: 6 7 8
 END_FACULTY
 START_FACULTY
 id: 1002
