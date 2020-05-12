@@ -105,6 +105,7 @@ void printAdviseesFromUser(BST<Faculty *> *masterFaculty, BST<Student *> *master
 
   if (!masterFaculty->hasKey(inputId)) {
     cout << "No faculty member currently has that id!" << endl;
+    cout << "Aborting command..." << endl;
     return;
   }
 
@@ -136,6 +137,7 @@ void addStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFac
     cout << "There are no faculty members, and every student must have a faculty advisor, "
          << "so a student cannot currently be created." << endl;
     cout << "There must be at least 1 faculty member before there can be a student." << endl;
+    cout << "Aborting command..." << endl;
     return;
   }
 
@@ -148,7 +150,7 @@ void addStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFac
   // Check that advisorId is valid
   if (!masterFaculty->hasKey(advisorId)) {
     cout << "No faculty member has the id: " << advisorId << endl;
-    cout << "A new student was not created." << endl;
+    cout << "Aborting command..." << endl;
     delete student;
     --studentIdCount;
 
@@ -176,13 +178,13 @@ void deleteStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
   }
   catch (invalid_argument &e) {
     cout << "That is not a valid student id!" << endl;
-    cout << "No student was deleted." << endl;
+    cout << "Aborting command..." << endl;
     return;
   }
 
   if (!masterStudent->hasKey(studentId)) {
     cout << "No student has that id!" << endl;
-    cout << "No student was deleted." << endl;
+    cout << "Aborting command..." << endl;
     return;
   }
   Student *student = masterStudent->search(studentId)->value;
@@ -214,13 +216,13 @@ void deleteFacultyFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
   }
   catch (invalid_argument &e) {
     cout << "That is not a valid faculty id!" << endl;
-    cout << "No faculty member was deleted." << endl;
+    cout << "Aborting command..." << endl;
     return;
   }
 
   if (!masterFaculty->hasKey(facultyId)) {
     cout << "No faculty member has that id!" << endl;
-    cout << "No faculty member was deleted." << endl;
+    cout << "Aborting command..." << endl;
     return;
   }
   TreeNode<Faculty *> *facultyNode = masterFaculty->search(facultyId);
@@ -250,12 +252,12 @@ void deleteFacultyFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
     // Check if new advisor id is valid
     if (!masterFaculty->hasKey(newAdvisorId)) {
       cout << "No faculty member has that id!" << endl;
-      cout << "No faculty member was deleted." << endl;
+      cout << "Aborting command..." << endl;
       return;
     }
     if (newAdvisorId == facultyId) {
       cout << "The advisees' new advisor cannot be their old advisor." << endl;
-      cout << "No faculty member was deleted." << endl;
+      cout << "Aborting command..." << endl;
       return;
     }
     Faculty *newAdvisor = masterFaculty->search(newAdvisorId)->value;
@@ -289,7 +291,7 @@ void changeStudAdvFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
   // Abort if student id is not valid
   if (!masterStudent->hasKey(studentId)) {
     cout << "No student has that id!" << endl;
-    cout << "Students were not modified." << endl;
+    cout << "Aborting command..." << endl;
     return;
   }
 
@@ -303,7 +305,7 @@ void changeStudAdvFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
   // Abort if advisor id is not valid
   if (!masterFaculty->hasKey(advisorId)) {
     cout << "No advisor has that id!" << endl;
-    cout << "Students were not modified." << endl;
+    cout << "Aborting command..." << endl;
     return;
   }
 
@@ -328,7 +330,7 @@ void removeFacAdviseeFromUser(BST<Student *> *masterStudent, BST<Faculty *> *mas
   // Check if faculty id is valid
   if (!masterFaculty->hasKey(facultyId)) {
     cout << "No faculty member has that id." << endl;
-    cout << "The database has not been modified." << endl;
+    cout << "Aborting command..." << endl;
     return;
   }
 
@@ -342,7 +344,7 @@ void removeFacAdviseeFromUser(BST<Student *> *masterStudent, BST<Faculty *> *mas
   // Check if faculty member actually has advisee
   if (!faculty->hasAdviseeId(adviseeId)) {
     cout << "Faculty member does not have that student as an advisee!" << endl;
-    cout << "The database has not been modified." << endl;
+    cout << "Aborting commmand..." << endl;
     return;
   }
 
@@ -357,13 +359,13 @@ void removeFacAdviseeFromUser(BST<Student *> *masterStudent, BST<Faculty *> *mas
   // Check if new advisor id is valid
   if (!masterFaculty->hasKey(newAdvisorId)) {
     cout << "That is not a valid faculty member id!" << endl;
-    cout << "The database has not been modified." << endl;
+    cout << "Aborting command..." << endl;
     return;
   }
 
   if (newAdvisorId == facultyId) {
     cout << "The student's new advisor cannot be their old advisor!" << endl;
-    cout << "The database has not been modified." << endl;
+    cout << "Aborting command..." << endl;
     return;
   }
 
