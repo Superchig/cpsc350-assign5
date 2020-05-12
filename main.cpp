@@ -128,6 +128,40 @@ void printAdviseesFromUser(BST<Faculty *> *masterFaculty, BST<Student *> *master
   }
 }
 
+// Add a student, based off of user input
+// Designed to be used for option 7) Add a new student
+void addStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty, int &studentIdCount)
+{
+  if (masterFaculty->isEmpty()) {
+    cout << "There are no faculty members, and every student must have a faculty advisor, "
+         << "so a student cannot yet be created." << endl;
+    cout << "There must be at least 1 faculty member before there can be a student." << endl;
+    return;
+  }
+
+  // Add new student
+  ++studentIdCount;
+
+  Student *student = Student::newFromUser(studentIdCount);
+
+  int advisorId = student->getAdvisor();
+  // Check that advisorId is valid
+  if (!masterFaculty->hasKey(advisorId)) {
+    cout << "No faculty member has the id: " << advisorId << endl;
+    cout << "A new student was not created." << endl;
+    delete student;
+    --studentIdCount;
+
+    return;
+  }
+
+  masterStudent->insert(student->getId(), student);
+  Faculty *advisor = masterFaculty->search(student->getAdvisor())->value;
+  connectPeople(student, advisor);
+
+  cout << "New student created!" << endl;
+}
+
 // Delete a student based off of user input
 // Designed to be used for option 8) Delete a student given an id
 void deleteStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty)
@@ -167,7 +201,7 @@ void deleteStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
 
 // Delete a faculty member based off of user input
 // Should prompt for a new faculty id for the advisees
-// Designed to be used for option 9) Delete a faculty member given an id
+// Designed to be used for option 10) Delete a faculty member given an id
 void deleteFacultyFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty)
 {
   cout << "Input id of faculty member to delete: ";
@@ -195,6 +229,7 @@ void deleteFacultyFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
   DoublyLinkedList<int> *advisees = faculty->getAdviseeIds();
   if (!advisees->isEmpty()) {
     cout << "This advisor has " << advisees->getSize() << " advisees." << endl;
+    cout << "Students must always have an advisor, so these advisees need a new advisor." << endl;
     cout << "Input the new advisor id for these advisees: ";
     string newAdvisorIdInput;
     getline(cin, newAdvisorIdInput);
@@ -203,6 +238,11 @@ void deleteFacultyFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
     // Check if new advisor id is valid
     if (!masterFaculty->hasKey(newAdvisorId)) {
       cout << "No faculty member has that id!" << endl;
+      cout << "No faculty member was deleted." << endl;
+      return;
+    }
+    if (newAdvisorId == facultyId) {
+      cout << "The advisees' new advisor cannot be their old advisor." << endl;
       cout << "No faculty member was deleted." << endl;
       return;
     }
@@ -309,6 +349,12 @@ void removeFacAdviseeFromUser(BST<Student *> *masterStudent, BST<Faculty *> *mas
     return;
   }
 
+  if (newAdvisorId == facultyId) {
+    cout << "The student's new advisor cannot be their old advisor!" << endl;
+    cout << "The database has not been modified." << endl;
+    return;
+  }
+
   Faculty *newAdvisor = masterFaculty->search(newAdvisorId)->value;
 
   // Update faculty and student
@@ -316,13 +362,6 @@ void removeFacAdviseeFromUser(BST<Student *> *masterStudent, BST<Faculty *> *mas
   connectPeople(advisee, newAdvisor);
   cout << "Removed advisee from faculty member!" << endl;
 }
-
-// BST<Student *> *readStudentsFromFile(string fileName)
-// {
-//   BST<Student *> *masterStudent = new BST<Student *>();
-
-//   return masterStudent;
-// }
 
 // Helper function to write a subtree of students into a file
 void writeSubStudentsToFile(TreeNode<Student *> *node, ostream &output)
@@ -381,6 +420,10 @@ BST<Student *> *readStudentsFromFile(string fileName)
   ifstream inputFile{fileName};
   BST<Student *> *masterStudent = new BST<Student *>();
 
+  if (!inputFile.is_open()) {
+    return masterStudent;
+  }
+
   string line;
   Student *student = nullptr;
   while (getline(inputFile, line)) {
@@ -426,6 +469,7 @@ BST<Student *> *readStudentsFromFile(string fileName)
   return masterStudent;
 }
 
+// Helper function to write a subtree of faculty members out to a file
 void writeSubFacultyToFile(TreeNode<Faculty *> *node, ostream &output)
 {
   if (!node) {
@@ -444,6 +488,7 @@ void writeSubFacultyToFile(TreeNode<Faculty *> *node, ostream &output)
   writeSubFacultyToFile(node->right, output);
 }
 
+// Write out a tree of faculty members to a file
 void writeFacultyToFile(BST<Faculty *> *masterFaculty, string fileName)
 {
   ofstream inputFile{fileName};
@@ -453,6 +498,8 @@ void writeFacultyToFile(BST<Faculty *> *masterFaculty, string fileName)
   inputFile.close();
 }
 
+// Take a string which contains ints, separated by spaces, and add those ints to
+// a list
 void addStringOfIntsToList(DoublyLinkedList<int> *list, string stringOfInts)
 {
   DoublyLinkedList<string> *substrings = split(stringOfInts, ' ');
@@ -469,10 +516,16 @@ void addStringOfIntsToList(DoublyLinkedList<int> *list, string stringOfInts)
   delete substrings;
 }
 
+// Read tree of faculty members in from file. Return empty tree if file cannot
+// be opened
 BST<Faculty *> *readFacultyFromFile(string fileName)
 {
   ifstream inputFile{fileName};
   BST<Faculty *> *masterFaculty = new BST<Faculty *>();
+
+  if (!inputFile.is_open()) {
+    return masterFaculty;
+  }
 
   string line;
   Faculty *faculty = nullptr;
@@ -519,13 +572,13 @@ int main(int argc, char **argv)
 {
   BST<Student *> *masterStudent = readStudentsFromFile("studentTable");
   BST<Faculty *> *masterFaculty = readFacultyFromFile("facultyTable");
-  // BST<Student *> *masterStudent = new BST<Student *>();
-  // BST<Faculty *> *masterFaculty = new BST<Faculty *>();
 
+  TreeNode<Student *> *maxStudent = masterStudent->getMax();
+  TreeNode<Faculty *> *maxFaculty = masterFaculty->getMax();
   // Equivalent to the most recent student id
-  int studentIdCount = masterStudent->getMax()->key;
+  int studentIdCount = maxStudent ? maxStudent->key : 0;
   // Equivalent to the most recent faculty id
-  int facultyIdCount = masterFaculty->getMax()->key;
+  int facultyIdCount = maxFaculty ? maxFaculty->key : 1000;
 
   // Main user input loop
   while (true) {
@@ -609,24 +662,7 @@ int main(int argc, char **argv)
       printAdviseesFromUser(masterFaculty, masterStudent);
     }
     else if (input == "7") { // Add new student
-      ++studentIdCount;
-
-      Student *student = Student::newFromUser(studentIdCount);
-
-      int advisorId = student->getAdvisor();
-      if (masterFaculty->hasKey(advisorId)) { // A faculty member has the student's advisor id
-        masterStudent->insert(student->getId(), student);
-        Faculty *advisor = masterFaculty->search(student->getAdvisor())->value;
-        connectPeople(student, advisor);
-
-        cout << "New student created!" << endl;
-      }
-      else { // No faculty member has id
-        cout << "No faculty member has the id: " << advisorId << endl;
-        cout << "A new student was not created." << endl;
-        delete student;
-        --studentIdCount;
-      }
+      addStudentFromUser(masterStudent, masterFaculty, studentIdCount);
     }
     else if (input == "8") { // Delete student given id
       deleteStudentFromUser(masterStudent, masterFaculty);
