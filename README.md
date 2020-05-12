@@ -23,4 +23,4 @@ To compile,
 ```make```
 
 After compiling, to run,
-./assignment5.exe
+```./assignment5.exe```
