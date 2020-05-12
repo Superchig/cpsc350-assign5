@@ -20,7 +20,14 @@ public:
   
   void printInfo() override;
 
+  // Accessors
+  string getMajor();
+  double getGpa();
   int getAdvisor();
+
+  // Modifiers
+  void setMajor(string major);
+  void setGpa(double gpa);
   void setAdvisor(int advisorID);
 
   // Prompt the user for information about a new Student, then return that Student

@@ -21,5 +21,10 @@ public:
   string getName();
   string getLevel();
 
+  // Modifiers
+  void setId(int id);
+  void setName(string name);
+  void setLevel(string level);
+
   virtual void printInfo() = 0;
 };

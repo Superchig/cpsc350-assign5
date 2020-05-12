@@ -1,6 +1,7 @@
 #include "BST.h"
 #include "Faculty.h"
 #include "Student.h"
+#include <fstream>
 #include <iostream>
 
 using namespace std;
@@ -128,7 +129,7 @@ void deleteStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
   try {
     studentId = stoi(idInput);
   }
-  catch (invalid_argument& e) {
+  catch (invalid_argument &e) {
     cout << "That is not a valid student id!" << endl;
     cout << "No student was deleted." << endl;
     return;
@@ -166,7 +167,7 @@ void deleteFacultyFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
   try {
     facultyId = stoi(idInput);
   }
-  catch (invalid_argument& e) {
+  catch (invalid_argument &e) {
     cout << "That is not a valid faculty id!" << endl;
     cout << "No faculty member was deleted." << endl;
     return;
@@ -181,8 +182,7 @@ void deleteFacultyFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
 
   // Update advisees w/ user-specified advisor id
   DoublyLinkedList<int> *advisees = faculty->getAdviseeIds();
-  if (!advisees->isEmpty())
-  {
+  if (!advisees->isEmpty()) {
     cout << "This advisor has " << advisees->getSize() << " advisees." << endl;
     cout << "Input the new advisor id for these advisees: ";
     string newAdvisorIdInput;
@@ -229,7 +229,7 @@ void changeStudAdvFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
     cout << "Students were not modified." << endl;
     return;
   }
-  
+
   Student *student = masterStudent->search(studentId)->value;
 
   cout << "Input id of new advisor for student: ";
@@ -306,21 +306,133 @@ void removeFacAdviseeFromUser(BST<Student *> *masterStudent, BST<Faculty *> *mas
   cout << "Removed advisee from faculty member!" << endl;
 }
 
+// BST<Student *> *readStudentsFromFile(string fileName)
+// {
+//   BST<Student *> *masterStudent = new BST<Student *>();
+
+//   return masterStudent;
+// }
+
+// Helper function to write a subtree of students into a file
+void writeSubStudentsToFile(TreeNode<Student *> *node, ostream &output)
+{
+  if (!node) {
+    return;
+  }
+
+  Student *student = node->value;
+  writeSubStudentsToFile(node->left, output);
+  output << "START_STUDENT\n"
+         << "id: " << student->getId() << '\n'
+         << "name: " << student->getName() << '\n'
+         << "level: " << student->getLevel() << '\n'
+         << "major: " << student->getMajor() << '\n'
+         << "gpa: " << student->getGpa() << '\n'
+         << "advisor: " << student->getAdvisor() << '\n'
+         << "END_STUDENT\n";
+  writeSubStudentsToFile(node->right, output);
+}
+
+// Serialize a tree of Students out to a text file
+void writeStudentsToFile(BST<Student *> *masterStudent, string fileName)
+{
+  ofstream outputFile{fileName};
+
+  writeSubStudentsToFile(masterStudent->getRoot(), outputFile);
+
+  outputFile.close();
+}
+
+// Split a string into substrings based off of a delimeter
+DoublyLinkedList<string> *split(string str, char delim)
+{
+  DoublyLinkedList<string> *result = new DoublyLinkedList<string>();
+  string buffer;
+
+  for (size_t i = 0; i < str.size(); ++i)
+  {
+    char ch = str.at(i);
+    if (ch == delim) {
+      result->insertBack(buffer);
+      buffer.clear();
+    }
+    else {
+      buffer.push_back(ch);
+    }
+  }
+  result->insertBack(buffer);
+
+  return result;
+}
+
+// Deserialize a tree of students from a text file
+BST<Student *> *readStudentsFromFile(string fileName)
+{
+  ifstream inputFile{fileName};
+  BST<Student *> *masterStudent = new BST<Student *>();
+
+  string line;
+  Student *student = nullptr;
+  while (getline(inputFile, line))
+  {
+    if (line == "START_STUDENT") {
+      student = new Student();
+      continue;
+    }
+    else if (line == "END_STUDENT") {
+      masterStudent->insert(student->getId(), student);
+      continue;
+    }
+
+    DoublyLinkedList<string> *substrings = split(line, ':');
+    string field = substrings->getFront();
+    string valueStr = substrings->getFrontNode()->next->data;
+    // Remove leading spaces from string
+    valueStr.erase(0, valueStr.find_first_not_of(' '));
+
+    if (field == "id") {
+      student->setId(stoi(valueStr));
+    }
+    else if (field == "name") {
+      student->setName(valueStr);
+    }
+    else if (field == "level") {
+      student->setLevel(valueStr);
+    }
+    else if (field == "major") {
+      student->setMajor(valueStr);
+    }
+    else if (field == "gpa") {
+      student->setGpa(stod(valueStr));
+    }
+    else if (field == "advisor") {
+      student->setAdvisor(stoi(valueStr));
+    }
+
+    delete substrings;
+  }
+
+  inputFile.close();
+
+  return masterStudent;
+}
+
 int main(int argc, char **argv)
 {
-  BST<Student *> *masterStudent = new BST<Student *>();
+  BST<Student *> *masterStudent = readStudentsFromFile("studentTable");
+  // BST<Student *> *masterStudent = new BST<Student *>();
   BST<Faculty *> *masterFaculty = new BST<Faculty *>();
 
   int studentIdCount = 0; // Equivalent to the most recent student id
   int facultyIdCount = 0; // Equivalent to the most recent faculty id
 
-  Student *defaultStud = new Student(++studentIdCount, "Jim Mij", "freshman", "Business", 3.2, 1);
-  Faculty *defaultFac = new Faculty(++facultyIdCount, "John Nhoj", "lecturer", "School of Business");
-  Faculty *defaultFac2 = new Faculty(++facultyIdCount, "Carl Lrac", "associate professor", "Physics");
-  connectPeople(defaultStud, defaultFac);
-  masterStudent->insert(defaultStud->getId(), defaultStud);
-  masterFaculty->insert(defaultFac->getId(), defaultFac);
-  masterFaculty->insert(defaultFac2->getId(), defaultFac2);
+  // Student *defaultStud = new Student(++studentIdCount, "Jim Mij", "freshman", "Business", 3.2, 1);
+  // Faculty *defaultFac = new Faculty(++facultyIdCount, "John Nhoj", "lecturer", "School of Business");
+  // Faculty *defaultFac2 = new Faculty(++facultyIdCount, "Carl Lrac", "associate professor", "Physics");
+  // connectPeople(defaultStud, defaultFac);
+  // masterStudent->insert(defaultStud->getId(), defaultStud);
+  // masterFaculty->insert(defaultFac->getId(), defaultFac);
+  // masterFaculty->insert(defaultFac2->getId(), defaultFac2);
 
   // Main user input loop
   while (true) {
@@ -449,6 +561,7 @@ int main(int argc, char **argv)
       removeFacAdviseeFromUser(masterStudent, masterFaculty);
     }
     else if (input == "14") { // Exit program
+      writeStudentsToFile(masterStudent, "studentTable");
       break;
     }
     else {

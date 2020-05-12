@@ -36,3 +36,18 @@ string Person::getLevel()
 void Person::printInfo()
 {
 }
+
+void Person::setId(int id)
+{
+  this->id = id;
+}
+
+void Person::setName(string name)
+{
+  this->name = name;
+}
+
+void Person::setLevel(string level)
+{
+  this->level = level;
+}

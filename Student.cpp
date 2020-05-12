@@ -91,3 +91,23 @@ Student *Student::newFromUser(int studentId)
   Student *result = new Student(studentId, name, level, major, gpa, advisorId);
   return result;
 }
+
+string Student::getMajor()
+{
+  return major;
+}
+
+double Student::getGpa()
+{
+  return gpa;
+}
+
+void Student::setMajor(string major)
+{
+  this->major = major;
+}
+
+void Student::setGpa(double gpa)
+{
+  this->gpa = gpa;
+}

@@ -1,0 +1,16 @@
+START_STUDENT
+id: 1
+name: Jim Mij
+level: freshman
+major: Business
+gpa: 3.2
+advisor: 1
+END_STUDENT
+START_STUDENT
+id: 2
+name: Mick Kcim
+level: sophomore
+major: Communications
+gpa: 2.1
+advisor: 1
+END_STUDENT
