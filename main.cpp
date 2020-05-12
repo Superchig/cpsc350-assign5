@@ -6,84 +6,52 @@
 
 using namespace std;
 
-// Helper function for printing all students in a BST
-void printStudentTree(TreeNode<Student *> *node)
+// Helper function for printing all items in a BST
+// Assumes that T is Student * or Faculty *
+template <class T>
+void printPersonTree(TreeNode<T> *node)
 {
   if (!node) {
     return;
   }
 
-  printStudentTree(node->left);
+  printPersonTree(node->left);
   node->value->printInfo();
-  printStudentTree(node->right);
+  printPersonTree(node->right);
 }
 
-// Print out the information for all students in BST
-void printStudentTree(BST<Student *> *tree)
+// Print out the information for all items in a BST
+// Assumes that T is a Student * or a Faculty *
+template <class T>
+void printPersonTree(BST<T> *tree)
 {
-  printStudentTree(tree->getRoot());
+  printPersonTree<T>(tree->getRoot());
 }
 
-// Helper function for deallocating the students in a BST
-void deallocateStudents(TreeNode<Student *> *node)
+// Helper function to deallocate the memory for the objects (not the nodes) in a
+// subtree
+// Assumes that T is a pointer to a dynamically allocated object
+template <class T>
+void deallocatePersonSubTree(TreeNode<T> *node)
 {
   if (node->left) {
-    deallocateStudents(node->left);
+    deallocatePersonSubTree(node->left);
   }
   if (node->right) {
-    deallocateStudents(node->right);
+    deallocatePersonSubTree(node->right);
   }
   delete node->value;
 }
 
-// Deallocate the memory for the Student objects (not the nodes) in a BST
-void deallocateStudents(BST<Student *> *tree)
+// Deallocate the memory for the dynamically allocated T objects in in a BST
+template <class T>
+void deallocatePersonTree(BST<T> *tree)
 {
   if (tree->isEmpty()) {
     return;
   }
 
-  deallocateStudents(tree->getRoot());
-}
-
-// Helper function for printFacultyTree
-void printFacultyTree(TreeNode<Faculty *> *node)
-{
-  if (!node) {
-    return;
-  }
-
-  printFacultyTree(node->left);
-  node->value->printInfo();
-  printFacultyTree(node->right);
-}
-
-// Prints out the information for all faculty in a BST
-void printFacultyTree(BST<Faculty *> *tree)
-{
-  printFacultyTree(tree->getRoot());
-}
-
-// Deallocates memory for the faculty in a tree
-void deallocateFaculty(TreeNode<Faculty *> *node)
-{
-  if (node->left) {
-    deallocateFaculty(node->left);
-  }
-  if (node->right) {
-    deallocateFaculty(node->right);
-  }
-
-  delete node->value;
-}
-
-void deallocateFaculty(BST<Faculty *> *tree)
-{
-  if (tree->isEmpty()) {
-    return;
-  }
-
-  deallocateFaculty(tree->getRoot());
+  deallocatePersonSubTree(tree->getRoot());
 }
 
 // Assign a Faculty to a Student as its advisor, assign the Student to the Faculty
@@ -92,6 +60,56 @@ void connectPeople(Student *advisee, Faculty *advisor)
 {
   advisee->setAdvisor(advisor->getId());
   advisor->addAdvisee(advisee->getId());
+}
+
+// Helper function to make deep copy of a subtree
+// Assumes T is Faculty * or Student *
+template <class T>
+void copyPersonSubtree(BST<T> *tree, TreeNode<T> *node)
+{
+  if (!node) {
+    return;
+  }
+
+  copyPersonSubtree(tree, node->left);
+  T nodeCopy = node->value->copy();
+  tree->insert(nodeCopy->getId(), nodeCopy);
+  copyPersonSubtree(tree, node->right);
+}
+
+// Make a deep copy of a tree
+// Assumes T is Faculty * or Student *
+template <class T>
+BST<T> *copyPersonBST(BST<T> *tree)
+{
+  BST<T> *copy = new BST<T>();
+  copyPersonSubtree(copy, tree->getRoot());
+  return copy;
+}
+
+// Make snapshots (deep copies) of a student tree and a faculty tree, and store
+// them for future use
+void makeSnapshots(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty,
+                   DoublyLinkedList<BST<Student *> *> *studSnapshots, DoublyLinkedList<BST<Faculty *> *> *facSnapshots)
+{
+  studSnapshots->insertBack(copyPersonBST<Student *>(masterStudent));
+  facSnapshots->insertBack(copyPersonBST<Faculty *>(masterFaculty));
+}
+
+// Deallocate dynamically allocated items held in a list of snapshots
+// Does not list nodes, but does delete tree nodes
+template <class T>
+void deallocateSnapshots(DoublyLinkedList<BST<T> *> *snapshots)
+{
+  ListNode<BST<T> *> *curr = snapshots->getFrontNode();
+  while (curr) {
+    BST<T> *tree = curr->data;
+    // cout << "Deallocating a snapshot!" << endl;
+    deallocatePersonTree(tree);
+    delete tree;
+
+    curr = curr->next;
+  }
 }
 
 // Print the information for the advisees of a Faculty based off of user input
@@ -131,7 +149,7 @@ void printAdviseesFromUser(BST<Faculty *> *masterFaculty, BST<Student *> *master
 
 // Add a student, based off of user input
 // Designed to be used for option 7) Add a new student
-void addStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty, int &studentIdCount)
+void addStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty, int &studentIdCount, DoublyLinkedList<BST<Student *> *> *studSnapshots, DoublyLinkedList<BST<Faculty *> *> *facSnapshots)
 {
   if (masterFaculty->isEmpty()) {
     cout << "There are no faculty members, and every student must have a faculty advisor, "
@@ -156,6 +174,8 @@ void addStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFac
 
     return;
   }
+
+  makeSnapshots(masterStudent, masterFaculty, studSnapshots, facSnapshots);
 
   masterStudent->insert(student->getId(), student);
   Faculty *advisor = masterFaculty->search(student->getAdvisor())->value;
@@ -377,6 +397,28 @@ void removeFacAdviseeFromUser(BST<Student *> *masterStudent, BST<Faculty *> *mas
   cout << "Removed advisee from faculty member!" << endl;
 }
 
+void rollbackFromUser(BST<Student *> *&masterStudent, BST<Faculty *> *&masterFaculty,
+                      DoublyLinkedList<BST<Student *> *> *studSnapshots, DoublyLinkedList<BST<Faculty *> *> *facSnapshots)
+{
+  if (studSnapshots->isEmpty()) {
+    cout << "You cannot roll back further than this!" << endl;
+    return;
+  }
+
+  BST<Student *> *prevStudents = studSnapshots->removeBack();
+  BST<Faculty *> *prevFaculty = facSnapshots->removeBack();
+
+  deallocatePersonTree<Student *>(masterStudent);
+  deallocatePersonTree<Faculty *>(masterFaculty);
+  delete masterStudent;
+  delete masterFaculty;
+
+  masterStudent = prevStudents;
+  masterFaculty = prevFaculty;
+
+  cout << "Rolled back to previous state!" << endl;
+}
+
 // Helper function to write a subtree of students into a file
 void writeSubStudentsToFile(TreeNode<Student *> *node, ostream &output)
 {
@@ -587,6 +629,9 @@ int main(int argc, char **argv)
   BST<Student *> *masterStudent = readStudentsFromFile("studentTable");
   BST<Faculty *> *masterFaculty = readFacultyFromFile("facultyTable");
 
+  DoublyLinkedList<BST<Student *> *> *studSnapshots = new DoublyLinkedList<BST<Student *> *>();
+  DoublyLinkedList<BST<Faculty *> *> *facSnapshots = new DoublyLinkedList<BST<Faculty *> *>();
+
   // Equivalent to the most recent student id
   int studentIdCount = masterStudent->isEmpty() ? 0 : masterStudent->getMax()->key;
   // Equivalent to the most recent faculty id
@@ -617,10 +662,10 @@ int main(int argc, char **argv)
     getline(cin, input);
 
     if (input == "1") { // Print all studen tinfo
-      printStudentTree(masterStudent);
+      printPersonTree<Student *>(masterStudent);
     }
     else if (input == "2") { // Print all faculty info
-      printFacultyTree(masterFaculty);
+      printPersonTree<Faculty *>(masterFaculty);
     }
     else if (input == "3") { // Print student info from id
       cout << "Input student id: ";
@@ -674,7 +719,8 @@ int main(int argc, char **argv)
       printAdviseesFromUser(masterFaculty, masterStudent);
     }
     else if (input == "7") { // Add new student
-      addStudentFromUser(masterStudent, masterFaculty, studentIdCount);
+      addStudentFromUser(masterStudent, masterFaculty, studentIdCount,
+                         studSnapshots, facSnapshots);
     }
     else if (input == "8") { // Delete student given id
       deleteStudentFromUser(masterStudent, masterFaculty);
@@ -696,6 +742,9 @@ int main(int argc, char **argv)
     else if (input == "12") { // Remove an advisee from a faculty member given ids
       removeFacAdviseeFromUser(masterStudent, masterFaculty);
     }
+    else if (input == "13") { // Rollback
+      rollbackFromUser(masterStudent, masterFaculty, studSnapshots, facSnapshots);
+    }
     else if (input == "14") { // Exit program
       writeStudentsToFile(masterStudent, "studentTable");
       writeFacultyToFile(masterFaculty, "facultyTable");
@@ -711,11 +760,16 @@ int main(int argc, char **argv)
   }
 
   // Deallocate students and delete trees
-  deallocateStudents(masterStudent);
+  deallocatePersonTree<Student *>(masterStudent);
   delete masterStudent;
 
-  deallocateFaculty(masterFaculty);
+  deallocatePersonTree<Faculty *>(masterFaculty);
   delete masterFaculty;
+
+  deallocateSnapshots<Student *>(studSnapshots);
+  deallocateSnapshots<Faculty *>(facSnapshots);
+  delete studSnapshots;
+  delete facSnapshots;
 
   return 0;
 }

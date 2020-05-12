@@ -22,6 +22,7 @@ public:
   int search(T val);
   T remove(T value);
   T removeAtPos(unsigned int pos);
+  T removeBack();
 
   unsigned int getSize();
   bool isEmpty();
@@ -153,6 +154,30 @@ T DoublyLinkedList<T>::removeFront()
   tmp->next = nullptr;
   delete tmp;
 
+  --size;
+
+  return data;
+}
+
+template <class T>
+T DoublyLinkedList<T>::removeBack()
+{
+  if (size <= 0) {
+    cerr << "Error: Trying to remove item from list of " << size << " elements." << endl;
+  }
+
+  if (size == 1) {
+    // If there is only one item in list
+    front = nullptr;
+  }
+  else {
+    back->prev->next = nullptr;
+  }
+
+  ListNode<T> *tmp = back;
+  T data = tmp->data;
+  tmp->prev = nullptr;
+  delete tmp;
   --size;
 
   return data;

@@ -26,5 +26,8 @@ public:
   // Modifiers
   void setDepartment(string department);
 
+  // Return a deep copy of this faculty member, including deep copy of linked list
+  Faculty *copy();
+
   static Faculty* newFromUser(int facultyId);
 };

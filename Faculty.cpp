@@ -107,3 +107,18 @@ void Faculty::setDepartment(string department)
 {
   this->department = department;
 }
+
+Faculty *Faculty::copy()
+{
+  Faculty *facultyCopy = new Faculty(getId(), getName(), getLevel(), getDepartment());
+
+  // Copy over advisee ids
+  ListNode<int> *curr = adviseeIds->getFrontNode();
+  while (curr) {
+    facultyCopy->addAdvisee(curr->data);
+
+    curr = curr->next;
+  }
+
+  return facultyCopy;
+}

@@ -1,8 +1,40 @@
 START_STUDENT
-id: 1
-name: Adam Mada
-level: junior
-major: Chemistry
+id: 2
+name: Jimmy Neutron
+level: senior
+major: 4.0
+gpa: 4
+advisor: 1002
+END_STUDENT
+START_STUDENT
+id: 3
+name: Mel Brooks
+level: senior
+major: Filmmaking
 gpa: 3.3
+advisor: 1001
+END_STUDENT
+START_STUDENT
+id: 4
+name: Ryan Cole
+level: junior
+major: Physics
+gpa: 3.9
+advisor: 1002
+END_STUDENT
+START_STUDENT
+id: 5
+name: Damon Daneel
+level: senior
+major: Psychology
+gpa: 3.2
+advisor: 1001
+END_STUDENT
+START_STUDENT
+id: 6
+name: Thomas Triam
+level: sophomore
+major: Computer Science
+gpa: 3.45
 advisor: 1001
 END_STUDENT

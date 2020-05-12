@@ -30,6 +30,9 @@ public:
   void setGpa(double gpa);
   void setAdvisor(int advisorID);
 
+  // Return a deep copy of this student
+  Student *copy();
+
   // Prompt the user for information about a new Student, then return that Student
   static Student *newFromUser(int studentId);
 };

@@ -3,5 +3,12 @@ id: 1001
 name: Nossel Lesson
 level: assistant professor
 department: Physics
-advisees: 1
+advisees: 3 5 6
+END_FACULTY
+START_FACULTY
+id: 1002
+name: Charles Neutral
+level: lecturer
+department: Mathematics
+advisees: 2 4
 END_FACULTY
