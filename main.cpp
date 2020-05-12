@@ -149,7 +149,8 @@ void printAdviseesFromUser(BST<Faculty *> *masterFaculty, BST<Student *> *master
 
 // Add a student, based off of user input
 // Designed to be used for option 7) Add a new student
-void addStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty, int &studentIdCount, DoublyLinkedList<BST<Student *> *> *studSnapshots, DoublyLinkedList<BST<Faculty *> *> *facSnapshots)
+void addStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty,
+                        int &studentIdCount, DoublyLinkedList<BST<Student *> *> *studSnapshots, DoublyLinkedList<BST<Faculty *> *> *facSnapshots)
 {
   if (masterFaculty->isEmpty()) {
     cout << "There are no faculty members, and every student must have a faculty advisor, "
@@ -186,7 +187,8 @@ void addStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFac
 
 // Delete a student based off of user input
 // Designed to be used for option 8) Delete a student given an id
-void deleteStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty)
+void deleteStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty,
+                           DoublyLinkedList<BST<Student *> *> *studSnapshots, DoublyLinkedList<BST<Faculty *> *> *facSnapshots)
 {
   cout << "Input id of student to delete: ";
   string idInput;
@@ -209,6 +211,8 @@ void deleteStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
   }
   Student *student = masterStudent->search(studentId)->value;
 
+  makeSnapshots(masterStudent, masterFaculty, studSnapshots, facSnapshots);
+
   // Remove student from advisor's list of advisees
   Faculty *advisor = masterFaculty->search(student->getAdvisor())->value;
   advisor->getAdviseeIds()->remove(studentId);
@@ -224,7 +228,8 @@ void deleteStudentFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
 // Delete a faculty member based off of user input
 // Should prompt for a new faculty id for the advisees
 // Designed to be used for option 10) Delete a faculty member given an id
-void deleteFacultyFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty)
+void deleteFacultyFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty,
+                           DoublyLinkedList<BST<Student *> *> *studSnapshots, DoublyLinkedList<BST<Faculty *> *> *facSnapshots)
 {
   cout << "Input id of faculty member to delete: ";
   string idInput;
@@ -282,6 +287,9 @@ void deleteFacultyFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
     }
     Faculty *newAdvisor = masterFaculty->search(newAdvisorId)->value;
 
+    // Since all the user input has been validated, we can make a snapshot
+    makeSnapshots(masterStudent, masterFaculty, studSnapshots, facSnapshots);
+
     // Iterate over each advisee and update them
     ListNode<int> *curr = advisees->getFrontNode();
     while (curr) {
@@ -293,6 +301,10 @@ void deleteFacultyFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
 
     cout << "Advisees updated!" << endl;
   }
+  else {
+    // Make a snapshot even if the faculty member has no advisees
+    makeSnapshots(masterStudent, masterFaculty, studSnapshots, facSnapshots);
+  }
 
   // Remove faculty member from tree, deallocate faculty member
   masterFaculty->deleteNode(faculty->getId());
@@ -301,7 +313,8 @@ void deleteFacultyFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
 
 // Change a student's advisor id based off of user input
 // Designed to be used in 11) Change student's advisor given ids
-void changeStudAdvFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty)
+void changeStudAdvFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty,
+                           DoublyLinkedList<BST<Student *> *> *studSnapshots, DoublyLinkedList<BST<Faculty *> *> *facSnapshots)
 {
   cout << "Input id of student to modify: ";
   string studentIdInput;
@@ -329,6 +342,8 @@ void changeStudAdvFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
     return;
   }
 
+  makeSnapshots(masterStudent, masterFaculty, studSnapshots, facSnapshots);
+
   Faculty *oldAdvisor = masterFaculty->search(student->getAdvisor())->value;
   Faculty *newAdvisor = masterFaculty->search(advisorId)->value;
 
@@ -340,7 +355,8 @@ void changeStudAdvFromUser(BST<Student *> *masterStudent, BST<Faculty *> *master
 
 // Remove advisee from faculty member given ids
 // Designed to be used in 12) remove advisee from faculty member given ids
-void removeFacAdviseeFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty)
+void removeFacAdviseeFromUser(BST<Student *> *masterStudent, BST<Faculty *> *masterFaculty,
+                              DoublyLinkedList<BST<Student *> *> *studSnapshots, DoublyLinkedList<BST<Faculty *> *> *facSnapshots)
 {
   cout << "Input id of faculty member to modify: ";
   string facultyIdInput;
@@ -390,6 +406,8 @@ void removeFacAdviseeFromUser(BST<Student *> *masterStudent, BST<Faculty *> *mas
   }
 
   Faculty *newAdvisor = masterFaculty->search(newAdvisorId)->value;
+
+  makeSnapshots(masterStudent, masterFaculty, studSnapshots, facSnapshots);
 
   // Update faculty and student
   faculty->getAdviseeIds()->remove(adviseeId);
@@ -725,24 +743,25 @@ int main(int argc, char **argv)
                          studSnapshots, facSnapshots);
     }
     else if (input == "8") { // Delete student given id
-      deleteStudentFromUser(masterStudent, masterFaculty);
+      deleteStudentFromUser(masterStudent, masterFaculty, studSnapshots, facSnapshots);
     }
     else if (input == "9") { // Add new faculty member
       ++facultyIdCount;
 
+      makeSnapshots(masterStudent, masterFaculty, studSnapshots, facSnapshots);
       Faculty *faculty = Faculty::newFromUser(facultyIdCount);
       masterFaculty->insert(faculty->getId(), faculty);
 
       cout << "New faculty member created!" << endl;
     }
     else if (input == "10") { // Delete faculty member given id
-      deleteFacultyFromUser(masterStudent, masterFaculty);
+      deleteFacultyFromUser(masterStudent, masterFaculty, studSnapshots, facSnapshots);
     }
     else if (input == "11") { // Change student's advisor given id and new faculty id
-      changeStudAdvFromUser(masterStudent, masterFaculty);
+      changeStudAdvFromUser(masterStudent, masterFaculty, studSnapshots, facSnapshots);
     }
     else if (input == "12") { // Remove an advisee from a faculty member given ids
-      removeFacAdviseeFromUser(masterStudent, masterFaculty);
+      removeFacAdviseeFromUser(masterStudent, masterFaculty, studSnapshots, facSnapshots);
     }
     else if (input == "13") { // Rollback
       rollbackFromUser(masterStudent, masterFaculty, studSnapshots, facSnapshots);

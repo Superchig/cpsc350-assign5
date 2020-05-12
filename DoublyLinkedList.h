@@ -176,8 +176,10 @@ T DoublyLinkedList<T>::removeBack()
 
   ListNode<T> *tmp = back;
   T data = tmp->data;
+  back = back->prev;
   tmp->prev = nullptr;
   delete tmp;
+
   --size;
 
   return data;
